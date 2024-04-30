@@ -15,3 +15,12 @@ A numeric value of the prevalence estimator
 \description{
 Compute the average,median-based prevalence estimate based on the scorings
 }
+\examples{
+data("periodontal")
+theta <- mean(periodontal$ti)
+Y_A <- average_based_scorings(periodontal$ni, periodontal$si)
+hat_theta_A <- prevalence_estimate(Y_A)
+cat("The average-based prevalence estimate is ", hat_theta_A, "\n")
+cat("The prevalence in the dataset is ", theta, "\n")
+
+}
