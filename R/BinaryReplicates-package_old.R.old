@@ -1,7 +1,8 @@
-#' @keywords internal
-"_PACKAGE"
-
-## usethis namespace: start
+#' The 'BinaryReplicates' package.
+#'
+#' @description A DESCRIPTION OF THE PACKAGE
+#'
+#' @docType package
 #' @name BinaryReplicates-package
 #' @aliases BinaryReplicates
 #' @useDynLib BinaryReplicates, .registration = TRUE
@@ -12,7 +13,6 @@
 #' @importFrom RcppParallel RcppParallelLibs
 #'
 #' @references
-#' Manuela Carenzi-Royer, Hadrien Lorenzo and Pierre Pudlo, Aix-Marseille Université.
+#' Stan Development Team (NA). RStan: the R interface to Stan. R package version 2.32.6. https://mc-stan.org
 #'
-## usethis namespace: end
 NULL

@@ -21,10 +21,22 @@ credint <- function(fit, alpha = .05) {
 #' @export
 #' @param fit The stanfit object return by BayesianFit.
 #' @return A vector of posterior probabilities that T=1
-postprobT <- function(fit){
+bayesian_scorings <- function(fit){
   # Extract the latent variable
   Ti <- rstan::extract(fit, pars = "Ti")$Ti
   # Compute the posterior probability
   out <- colMeans(Ti)
+  return(out)
+}
+
+#' Compute the Bayesian prevalence estimate based on the scorings
+#' @export
+#' @param fit The stanfit object return by BayesianFit.
+#' @return A numeric value of the Bayesian prevalence estimator
+bayesian_prevalence_estimate <- function(fit){
+  # Extract the latent variable
+  theta <- rstan::extract(fit, pars = "theta")$theta
+  # Compute the posterior mean
+  out <- mean(theta)
   return(out)
 }

@@ -2,12 +2,12 @@ Package: BinaryReplicates
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
 Authors@R: 
-    person("Pierre", "Pudlo", , "pierre.pudlo@univ-amu.fr", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0003-0995-716X"))
-    person("Manuela", "Royez-Carenzi", , "manuela.carenzi@univ-amu.fr", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0003-2392-1120"))
-    person("Hadrien", "Lorenzo", , "hadrien.lorenzo@univ-amu.fr", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0002-0253-8539"))
+    c(person("Pierre", "Pudlo", , "pierre.pudlo@univ-amu.fr", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-0995-716X")),
+    person("Manuela", "Royez-Carenzi", , "manuela.carenzi@univ-amu.fr", role = c("aut"),
+           comment = c(ORCID = "0000-0003-2392-1120")),
+    person("Hadrien", "Lorenzo", , "hadrien.lorenzo@univ-amu.fr", role = c("aut"),
+           comment = c(ORCID = "0000-0002-0253-8539")))
 Description: What the package does (one paragraph).
 License: GPL (>= 3)
 Encoding: UTF-8

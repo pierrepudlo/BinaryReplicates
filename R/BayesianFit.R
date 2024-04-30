@@ -16,13 +16,13 @@ BayesianFit <- function(ni, si,
   # Check the data
   if (!is.numeric(ni) | !is.numeric(si)) {
     stop("ni and si must be numeric vectors")
-  } else {
-    if (length(ni) != length(si)) {
-      stop("ni and si must have the same length")
-    } else {
-    if (!is.integer(ni)) ni <- as.integer(ni)
-    if (!is.integer(si)) si <- as.integer(si)
-  }}
+  }
+  if (length(ni) != length(si)) {
+    stop("ni and si must have the same length")
+  }
+  if (!is.integer(ni)) ni <- as.integer(ni)
+  if (!is.integer(si)) si <- as.integer(si)
+
   n <- length(ni)
   standata <- list(n = n, ni = ni, si = si,
                    a_FP = prior$a_FP, b_FP = prior$b_FP,

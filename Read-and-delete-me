@@ -8,3 +8,8 @@ Stan-specific notes:
   placed in the file 'inst/include/stan_meta_header.hpp'.
 * The precompiled stanmodel objects will appear in a named list called 'stanmodels',
   and you can call them with e.g., 'rstan::sampling(stanmodels$foo, ...)'
+
+Run roxygen2 to generate documentation and NAMESPACE file:
+try(roxygen2::roxygenize(load_code = rstantools_load_code), silent = TRUE)
+roxygen2::roxygenize()
+

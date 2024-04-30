@@ -4,10 +4,21 @@
 \name{BinaryReplicates-package}
 \alias{BinaryReplicates-package}
 \alias{BinaryReplicates}
-\title{The 'BinaryReplicates' package.}
+\title{BinaryReplicates: What the Package Does (One Line, Title Case)}
 \description{
-A DESCRIPTION OF THE PACKAGE
+What the package does (one paragraph).
 }
 \references{
-Stan Development Team (NA). RStan: the R interface to Stan. R package version 2.32.6. https://mc-stan.org
+Manuela Carenzi-Royer, Hadrien Lorenzo and Pierre Pudlo, Aix-Marseille Université.
 }
+\author{
+\strong{Maintainer}: Pierre Pudlo \email{pierre.pudlo@univ-amu.fr} (\href{https://orcid.org/0000-0003-0995-716X}{ORCID})
+
+Authors:
+\itemize{
+  \item Manuela Royez-Carenzi \email{manuela.carenzi@univ-amu.fr} (\href{https://orcid.org/0000-0003-2392-1120}{ORCID})
+  \item Hadrien Lorenzo \email{hadrien.lorenzo@univ-amu.fr} (\href{https://orcid.org/0000-0002-0253-8539}{ORCID})
+}
+
+}
+\keyword{internal}
