@@ -57,6 +57,15 @@ T_M <- classification_from_scoring(Y_M, vL = .4, vU = .6) # classifications
 theta_M <- prevalence_estimate(Y_M) # prevalence estimate
 ```
 
+### The most likely-based scorings, classification
+
+The most likely-based computations need to know values of the fixed parameters $\theta$, $p$ and $q$. It is useless to compute a most likely)based prevalence estimate, as $\theta$ is supposed to be known. The most likely-based scorings and classifications can be computed with
+
+```r
+Y_L <- most_likely_based_scorings(ni, si, theta, p, q) # scorings
+T_L <- classification_from_scoring(Y_L, vL = .4, vU = .6) # classifications
+```
+
 ### Bayesian scorings, classifications and prevalence estimate
 
 First, we need to fit the Bayesian model to the synthetic data with
