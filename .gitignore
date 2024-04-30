@@ -47,3 +47,11 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Temporary directory
+tmp/
+
+# Compile code
+src/*.o
+src/*.so
+
