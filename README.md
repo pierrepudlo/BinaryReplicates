@@ -43,3 +43,15 @@ If you have installed the package `shinystan`, you can explore the posterior dis
 ```r
 shinystan::launch_shinystan(fit)
 ```
+
+Credible intervals of probability 90% can be obtained with
+
+```r
+credint(fit, alpha = .1)
+```
+
+And posterior probabilities that $T_i=1$ can be obtained with
+
+```r
+postprobT(fit)
+```
