@@ -39,7 +39,7 @@ si <- rbinom(n, ni, ti*(1-q) + (1-ti)*p)
 synth_data <- data.frame(ni = ni, si = si, ti=ti)
 ```
 
-## Average- and median-based computations
+### Average- and median-based computations
 
 The average-based scorings, classifications and prevalence estimate can be computed with
 
@@ -57,7 +57,7 @@ T_M <- classification_from_scoring(Y_M, vL = .4, vU = .6) # classifications
 theta_M <- prevalence_estimate(Y_M) # prevalence estimate
 ```
 
-## Bayesian scorings, classifications and prevalence estimate
+### Bayesian scorings, classifications and prevalence estimate
 
 First, we need to fit the Bayesian model to the synthetic data with
 
