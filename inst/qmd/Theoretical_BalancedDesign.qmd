@@ -1,0 +1,651 @@
+---
+title: "Theoretical results with balanced design"
+author: Manuela Royer-Carenzi, Hadrien Lorenzo and Pierre Pudlo
+format: 
+  html:
+    df-print: kable
+---
+
+Note: before rendering the quarto while working on the package, you need to run the command below manually in the console to set the working directory appropriately:
+
+```{r}
+#| eval: false
+setwd(paste0(getwd(),"/inst/qmd"))
+```
+
+To remove the change after rendering the quarto while working on the package, you need to run the command below manually in the console:
+
+```{r}
+#| eval: false
+setwd(paste0(getwd(), "/../.."))
+```
+
+
+# Set fixed parameters and the design of the data
+
+We consider a balanced design with `Nb_Indiv` individuals, and the same number of replicates per individual, saved in variable `Nb_ReplicT`. Fixed parameters varies in a finite set as follows:
+
+- the prevalence $\theta_T\in(0,1)$ takes values in `Theta_ROC`, and should be composed of three possible values,
+- the false positive rate $p\in(0,.5)$ takes values in `Vecp`,
+- the false negative rate $q\in(0,.5)$ takes values in `Vecq`.
+
+```{r}
+Nb_Indiv <- 50
+Nb_ReplicT <- 4
+Theta_ROC <- c(.3, .5, .7)
+Vecp <- c(.01, .1)
+Vecq <- c(.01, .1)
+```
+
+For simplicity of the code, we need the following computations
+```{r}
+nTR <- length(Theta_ROC)
+ValUniqThetaT <- seq(0, 1, by = .01)
+Nb_ValTheta <- length(ValUniqThetaT)
+ThetaT <- ValUniqThetaT
+n <- Nb_ReplicT
+m <- floor(n/2)
+```
+
+# Set graphical parameters
+
+```{r}
+quality <- 500
+width1 <- 1800
+width2 <- 2500
+width3 <- 1300
+height <- 1000
+cex <- 2.5
+nc2 <- 2
+nc1 <- 1.5
+nc <- 1.8
+#
+ColM <- "steelblue2"
+ColA <- "red2"
+ColL <- "green3"
+# couleursL <- c("green", "green2", "green3", "darkgreen")
+colfuncL <- colorRampPalette(c("#196F3D", "springgreen"))
+couleursL <- colfuncL(nTR)
+colfuncM <- colorRampPalette(c("blue3", "steelblue1"))
+couleursM <- colfuncM(nTR)
+colfuncA <- colorRampPalette(c("red3", "red1"))
+couleursA <- colfuncA(nTR)
+```
+
+# Intermediate computation: Table 1
+
+The values of $\omega(n, s)$ are given in the following table:
+
+```{r}
+#| echo: false
+r <- 0:n
+Omegar <- matrix(NA, nrow=(n+1), ncol=length(Vecp)*length(Vecq))
+rownames(Omegar) <- as.character(r)
+Cnr_p <- Omegar
+Cnr_q <- Omegar
+CN <- NULL
+k <- 0
+for (i in 1:length(Vecp))
+{
+  for (j in 1:length(Vecq))
+  {
+    p <- Vecp[i]
+    q <- Vecq[j]
+    k <- k+1
+    #
+    temp <- paste("p=", p, "_q=", q, sep=" ")
+    CN <- c(CN, temp)
+    Omegar[,k] <- 1 / (1 + (q/(1-p))^r * ((1-q)/p)^(n-r))
+    Cnr_p[,k] <- choose(n,r) * (1-p)^r * p^(n-r)
+    Cnr_q[,k] <- choose(n,r) * (1-q)^(n-r) * q^r
+  }
+}
+colnames(Omegar) <- CN
+colnames(Cnr_p) <- CN
+colnames(Cnr_q) <- CN
+#
+# Table 1: code to export as csv
+# Nomcsv <- paste("Table1_Omegar_", "_n", n, ".csv", sep="")
+# write.csv(Omegar, Nomcsv, quote = FALSE)
+Omegar <- as.data.frame(Omegar)
+rownames(Omegar) <- NULL
+Omegar <- cbind(data.frame(s=seq(n, 0, by=-1)), round(Omegar, digits = 4))
+Omegar
+```
+
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+# Graphics for the bias and the MSE when estimating the prevalence $\theta_T$
+
+```{r}
+BiasL <- rep(NA, Nb_ValTheta)
+VarL  <- BiasL
+MSE_L <- BiasL
+#
+Res_AM <- matrix(NA, ncol=length(Vecp)*length(Vecq), nrow=4)
+colnames(Res_AM) <- CN
+rownames(Res_AM) <- c("c", "d", "N_A", "N_M")
+#
+Res_NL <- matrix(NA, ncol=length(Vecp)*length(Vecq), nrow=n+2)
+colnames(Res_NL) <- CN
+namesRow <- as.numeric(rownames(Omegar)) +1
+rownames(Res_NL) <- c("0", as.character(namesRow))
+#
+ResF_NL <- matrix(NA, nrow=Nb_ValTheta, ncol=length(Vecp)*length(Vecq))
+colnames(ResF_NL) <- CN
+rownames(ResF_NL) <- as.character(ValUniqThetaT)
+#
+ind_col <- 0
+#
+for (i in 1:length(Vecp))
+{
+for (j in 1:length(Vecq))
+{
+  ind_col <- ind_col + 1
+  p <- Vecp[i]
+  q <- Vecq[j]
+  #
+  ##########
+  # Bias, Figure 3
+  ##########
+  #
+  BiasA <- p - ThetaT * (p+q)
+  #
+  SumM <- 0
+  if (n-2*m-1==0)
+  {
+    for (r in 0:m)
+    {
+      temp <- choose(n,r)*((1-p)^r*p^(n-r)*(1-ThetaT) + (1-q)^(n-r)*q^r*ThetaT)
+      SumM <- SumM + temp
+    }
+  }
+  if (n-2*m==0)
+  {
+    for (r in 0:(m-1))
+    {
+      temp <- choose(n,r)*((1-p)^r*p^(n-r)*(1-ThetaT) + (1-q)^(n-r)*q^r*ThetaT)
+      SumM <- SumM + temp
+    }
+    SumM <- SumM + choose(n,m)/2*((1-p)^m*p^(n-m)*(1-ThetaT) + (1-q)^(n-m)*q^m*ThetaT)
+  }
+  BiasM <- SumM - ThetaT
+  #
+  for (k in 1:Nb_ValTheta)
+  {
+    SumL <- 0
+    for (r in 0:n)
+    {
+      if ( (1-q)^(n-r)*q^r*ThetaT[k] > (1-p)^r*p^(n-r)*(1-ThetaT[k]) )
+      {
+        temp <- choose(n,r)*((1-p)^r*p^(n-r)*(1-ThetaT[k]) + (1-q)^(n-r)*q^r*ThetaT[k])
+        SumL <- SumL + temp
+      }
+      if ( all.equal((1-q)^(n-r)*q^r*ThetaT[k] , (1-p)^r*p^(n-r)*(1-ThetaT[k]) )==TRUE )
+      {
+        temp <- choose(n,r)/2 *((1-p)^r*p^(n-r)*(1-ThetaT[k]) + (1-q)^(n-r)*q^r*ThetaT[k])
+        SumL <- SumL + temp
+      }
+    }
+    BiasL[k] <- SumL - ThetaT[k]
+    #
+  }
+  #
+  DF <- data.frame(ThetaT=ThetaT, Average=BiasA, Median=BiasM, Likeli=BiasL)
+  summary(DF[,2:4])
+  NomCSV <- paste("output_Theoretical/ResBias_n", n, "_p", p, "_q", q, ".csv", sep="")
+  write.csv2(DF, NomCSV, quote=F, row.names=F)
+  #
+  Namejpg <- paste("output_Theoretical/Figure3_PlotBias_", "_n", n, "_p", p, "_q", q, ".jpg", sep="")
+  jpeg(Namejpg, quality=quality, width=width3, height=height)
+  par(cex=cex, cex.axis=nc1, cex.lab=nc2, cex.main=nc1)
+  par(mar = c(4, 4.8, 4, 2))
+  Min <- min(DF[,2:4])
+  Max <- max(DF[,2:4])
+  TitlePlot <- paste("n=", n, ";  p=", p, ";  q=", q, sep="")
+  plot(DF[,1], DF[,4], type="p", col=ColL, pch=20, 
+     ylim=c(Min, Max), xlab=expression(theta[T]),
+     ylab="Bias", main=TitlePlot, lwd=1.5)
+  lines(DF[,1], DF[,3], type="l", col=ColM, lwd=4)
+  lines(DF[,1], DF[,2], type="l", col=ColA, lwd=3, lty=2)
+  abline(h=0, col="darkred")
+  posx <- 0.75
+  posy <- Max
+  if ( (i==1) & (j==2) )
+  {
+    posx <- 0
+    posy <- Min + 0.03
+  }
+  legend(x=posx, y=posy, legend=c("Average", "Median", "Max. Lik."),
+       col=c(ColA, ColM, ColL), lty=c(2,1,3), lwd=c(3,4,3))
+  dev.off()
+  #
+  ##########
+  # MSE, Figure 4
+  ##########
+  #
+  EX <- ThetaT + p - ThetaT * (p + q)
+  VarX <- EX * (1-EX)
+  GammaX <- ThetaT * (1 - ThetaT) * (p+q-1)^2
+  #
+  VarA0 <- VarX / n + (n-1) * GammaX / n
+  VarA <- VarA0 / Nb_Indiv
+  MSE_A <- BiasA^2 + VarA
+  # 
+  gammaM <- 0
+  if (n-2*m==0)
+  {
+    gammaM <- choose(n,m) * ((1-p)^m * p^(n-m) * (1-ThetaT) + (1-q)^(n-m) * q^m * ThetaT) /4
+  }
+  EM <- BiasM + ThetaT
+  VarM0 <- EM * (1-EM) - gammaM
+  VarM <- VarM0 / Nb_Indiv
+  MSE_M <- BiasM^2 + VarM
+  #
+  EL <- BiasL + ThetaT
+  VarL0 <- EL * (1-EL) 
+  VarL <- VarL0 / Nb_Indiv
+  MSE_L <- BiasL^2 + VarL
+  #
+  DFM <- data.frame(ThetaT=ThetaT, Average=MSE_A, Median=MSE_M, Likeli=MSE_L)
+  summary(DFM[,2:4])
+  NomCSV <- paste("output_Theoretical/ResMSE_n", n, "_p", p, "_q", q, ".csv", sep="")
+  write.csv2(DFM, NomCSV, quote=F, row.names=F)
+  #
+  MinE <- min(c(MSE_A, MSE_M, MSE_L))
+  MaxE <- max(c(MSE_A, MSE_M, MSE_L))
+  #
+  Namejpg <-  paste("output_Theoretical/Figure4_PlotMSE_", "_n", n, "_p", p, "_q", q, "_N", Nb_Indiv, ".jpg", sep="")
+  jpeg(Namejpg, quality=quality, width=width3, height=height)
+  par(cex=cex, cex.axis=nc1, cex.lab=nc2, cex.main=nc1)
+  par(mar = c(4, 4.8, 4, 2))
+  Min <- min(DF[,2:4])
+  Max <- max(DF[,2:4])
+  TitlePlot <- paste("N=", Nb_Indiv, "; n=", n, ";  p=", p, ";  q=", q, sep="")
+  plot(DF[,1], MSE_L, type="p", col=ColL, pch=20, 
+     ylim=c(MinE, MaxE), xlab=expression(theta[T]), 
+     ylab="MSE", main=TitlePlot, lwd=2)
+  lines(DF[,1], MSE_M, type="l", col=ColM, lwd=4)
+  lines(DF[,1], MSE_A, type="l", col=ColA, lwd=3, lty=2)
+  abline(h=0, col="darkred")
+  posx <- 0
+  posy <- MaxE
+  if ( (i==2) & (j==1) )
+  {
+    posx <- 0.75
+    posy <- MaxE
+  }
+  if ( (i==2) & (j==2) )
+  {
+    posx <- 0.4
+    posy <- MaxE
+  }
+  legend(x=posx, y=posy, legend=c("Average", "Median", "Max. Lik."), 
+       col=c(ColA, ColM, ColL), lty=c(2,1,3), lwd=c(3,4,3))
+  dev.off()
+  #
+  ##########
+  # Details (interval J and parabola shape)
+  ##########
+  #
+  alphaA <- -(p+q)
+  betaA <- p
+  #
+  sumM <- 0
+  if (n-2*m-1==0)
+  {
+    for (r in 0:m)
+    {
+      temp <- choose(n,r)*((1-q)^(n-r)*q^r - (1-p)^r*p^(n-r))
+      sumM <- sumM + temp
+    }
+  }
+  if (n-2*m==0)
+  {
+    for (r in 0:(m-1))
+    {
+      temp <- choose(n,r)*((1-q)^(n-r)*q^r - (1-p)^r*p^(n-r))
+      sumM <- sumM + temp
+    }
+    sumM <- sumM + choose(n,m)*((1-q)^(n-m)*q^m - (1-p)^m*p^(n-m))/2
+  }
+  aM <- sumM
+  alphaM <- sumM - 1
+  betaM <- 0
+  if (n-2*m-1==0)
+  {
+    for (r in 0:m)
+    {
+      temp <- choose(n,r)*(1-p)^r*p^(n-r)
+      betaM <- betaM + temp
+    }
+  }
+  if (n-2*m==0)
+  {
+    for (r in 0:(m-1))
+    {
+      temp <- choose(n,r)*(1-p)^r*p^(n-r)
+      betaM <- betaM + temp
+    }
+    betaM <- betaM + choose(n,m)*(1-p)^m*p^(n-m) /2
+  }
+  #
+  # Interval J
+  # 
+  valc <- (betaA-betaM) / (alphaM - alphaA)
+  vald <- -(betaA+betaM) / (alphaM + alphaA)
+  Res_AM[1, ind_col] <- valc
+  Res_AM[2, ind_col] <- vald
+  #
+  # Parabola shape 
+  #
+  N_A <- (1+1/alphaA)^2
+  N_M <- (1+1/alphaM)^2
+  Res_AM[3, ind_col] <- N_A
+  Res_AM[4, ind_col] <- N_M
+  # 
+  DiffT <- diff(c(Omegar[, ind_col], 1))
+  ThetaTL <- c(Omegar[1, ind_col]/2,  Omegar[ , ind_col] + DiffT / 2)
+  Nb_ValThetaL <- length(ThetaTL)
+  betaL <- rep(0, Nb_ValThetaL)
+  aL <- betaL
+  alphaL <- betaL
+  for (k in 1:Nb_ValThetaL)
+  {
+    SumL <- 0
+    SumpqL <- 0
+    for (r in 0:n)
+    {
+      if ( (1-q)^(n-r)*q^r*ThetaTL[k] > (1-p)^r*p^(n-r)*(1-ThetaTL[k]) )
+      {
+        temp <- choose(n,r)*(1-p)^r*p^(n-r)
+        temq <- choose(n,r)*(q)^r*(1-q)^(n-r)
+        SumL <- SumL + temp
+        SumpqL <- SumpqL + temq - temp
+      }
+      if ( all.equal((1-q)^(n-r)*q^r*ThetaTL[k] , (1-p)^r*p^(n-r)*(1-ThetaTL[k]) ) == TRUE )
+      {
+        temp <- choose(n,r)*(1-p)^r*p^(n-r) / 2
+        temq <- choose(n,r)*(q)^r*(1-q)^(n-r) / 2
+        SumL <- SumL + temp
+        SumpqL <- SumpqL + temq - temp 
+      }
+    }  
+    betaL[k] <- SumL
+    aL[k] <- SumpqL
+    alphaL[k] <- SumpqL - 1
+    #
+  }
+  Res_NL[, ind_col] <- (1+1/alphaL)^2
+  #
+}
+}
+# Table 2
+as.data.frame(round(Res_AM, digits = 3))
+write.csv2(Res_AM, paste("output_Theoretical/Table2_Values_AM_n", n, ".csv", sep=""), quote=F)
+# Table 3
+as.data.frame(round(Res_NL, digits = 3))
+write.csv2(Res_NL, paste("output_Theoretical/Table3_Values_NL_n", n, ".csv", sep=""), quote=F, row.names=T)
+```
+
+# Accuracy measures IF, ACC, MK and MCC
+
+Supports only 3 values for `Theta_ROC`
+
+```{r}
+Seuils_new_inf <- seq(0.01, 0.5, by=0.005)
+Seuils_new_sup <- 1 - Seuils_new_inf
+xlab <- expression(paste(v[D], " cut-off", sep=""))
+NomsCol <- c("SeA", "SpA", "SeM", "SpM", "SeL3", "SpL3", "SeL5", "SpL5", "SeL7", "SpL7")
+MatSeSp <- matrix(NA, nrow=length(Seuils_new_inf), ncol=length(NomsCol))
+colnames(MatSeSp) <- NomsCol
+MatSeSp <- as.data.frame(MatSeSp)
+rownames(MatSeSp) <- as.character(Seuils_new_inf)
+MatInd01 <- MatSeSp
+colnames(MatInd01) <- c("Ind0A", "Ind1A", "Ind0M", "Ind1M", "Ind0L3", 
+                        "Ind1L3", "Ind0L5", "Ind1L5", "Ind0L7", "Ind1L7")
+#
+MatIF <- matrix(NA, nrow=length(Seuils_new_inf), ncol=2+nTR)
+colnames(MatIF) <- c("IF_A", "IF_M", paste("IF_L", Theta_ROC, sep="_"))
+rownames(MatIF) <- as.character(Seuils_new_inf)
+#
+MatACC <- matrix(NA, nrow=length(Seuils_new_inf), ncol=3*nTR)
+colnames(MatACC) <- c(paste("ACC_A", Theta_ROC, sep="_"), 
+                     paste("ACC_M", Theta_ROC, sep="_"), 
+                     paste("ACC_L", Theta_ROC, sep="_"))
+rownames(MatACC) <- as.character(Seuils_new_inf)
+MatMCC <- MatACC
+colnames(MatMCC) <- c(paste("MCC_A", Theta_ROC, sep="_"), 
+                      paste("MCC_M", Theta_ROC, sep="_"), 
+                      paste("MCC_L", Theta_ROC, sep="_"))
+MatMK <- MatACC
+colnames(MatMK) <- c(paste("MK_A", Theta_ROC, sep="_"), 
+                      paste("MK_M", Theta_ROC, sep="_"), 
+                      paste("MK_L", Theta_ROC, sep="_"))
+MatVp <- MatACC
+colnames(MatVp) <- c(paste("VPP_A", Theta_ROC, sep="_"), 
+                       paste("VPP_M", Theta_ROC, sep="_"), 
+                       paste("VPP_L", Theta_ROC, sep="_"))
+MatVn <- MatACC
+colnames(MatVn) <- c(paste("VPN_A", Theta_ROC, sep="_"), 
+                       paste("VPN_M", Theta_ROC, sep="_"), 
+                       paste("VPN_L", Theta_ROC, sep="_"))
+PTK <- MatACC
+IK <- MatACC
+ETK <- MatACC
+VTK <- MatACC
+#
+mU <- floor(n/2)
+mD <- floor((n-1)/2)
+#
+for (i in 1:length(Vecp))
+{
+for (j in 1:length(Vecq))
+{
+  p <- Vecp[i]
+  q <- Vecq[j]
+  ind_col <- (i-1)*length(Vecq) + j
+  for (k in 1:length(Seuils_new_inf))
+  {
+    Seuil_inf <- Seuils_new_inf[k]
+    Seuil_sup <- Seuils_new_sup[k]
+    mkU <- floor(n* Seuil_sup)
+    mkD <- floor((n-1)* Seuil_inf)
+    #
+    # Average
+    #
+    SeA <- sum(Cnr_q[1:(n-mkU), ind_col])
+    SpA <- sum(Cnr_p[(n-mkD+1):(n+1), ind_col])
+    ind_IndA <- (n-mkU+1):(n-mkD)
+    if ((n-mkU+1) <= (n-mkD))
+    {
+      Ind1A <- sum(Cnr_q[ind_IndA, ind_col])
+      Ind0A <- sum(Cnr_p[ind_IndA, ind_col])
+    }
+    else
+    {
+      Ind1A <- 0
+      Ind0A <- 0
+    }
+    #
+    # Median
+    #
+    SeM <- sum(Cnr_q[1:(n-mU), ind_col])
+    SpM <- sum(Cnr_p[(n-mD+1):(n+1), ind_col])
+    ind_IndM <- (n-mU+1):(n-mD)
+    if ((n-mU+1) <= (n-mD))
+    {
+      Ind1M <- sum(Cnr_q[ind_IndM, ind_col])
+      Ind0M <- sum(Cnr_p[ind_IndM, ind_col])
+    }
+    else
+    {
+      Ind1M <- 0
+      Ind0M <- 0
+    }
+    #
+    # Max Likelihood
+    #
+    tempSL <- NULL
+    tempIL <- NULL
+    for (j in 1:nTR)
+    {
+      thetaj <- Theta_ROC[j]
+      omegaj <- Omegar[, ind_col]
+      SeL <- sum(Cnr_q[(thetaj > omegaj), ind_col])
+      SpL <- sum(Cnr_p[(thetaj < omegaj), ind_col])
+      tempSL <- c(tempSL, SeL, SpL)
+      ind_IndL <- thetaj == omegaj
+      if (length(ind_IndL) > 0)
+      {
+        Ind1L <- sum(Cnr_q[ind_IndL, ind_col])
+        Ind0L <- sum(Cnr_p[ind_IndL, ind_col])
+      }
+      else
+      {
+        Ind1L <- 0
+        Ind0L <- 0
+      }
+      tempIL <- c(tempIL, Ind0L, Ind1L)
+    } 
+  #
+  #
+  MatSeSp[k, ] <- c(SeA, SpA, SeM, SpM, tempSL)
+  MatInd01[k, ] <- c(Ind0A, Ind1A, Ind0M, Ind1M, tempIL)
+  }
+  #
+  MatIF[, 1] <- MatSeSp[, 1] + MatSeSp[, 2] - 1
+  MatIF[, 2] <- MatSeSp[, 3] + MatSeSp[, 4] - 1
+  for (j in 1:nTR)
+  {
+    MatIF[, (2+j)] <- MatSeSp[, (5+2*(j-1))] + MatSeSp[, (6+2*(j-1))] - 1
+  }
+  Nomcsv <-  paste("output_Theoretical/MatIF_n", n, "_p", p, "_q", q, ".csv", sep="")
+  write.csv2(MatIF, Nomcsv, quote=F, row.names=T)
+  #
+  for (j in 1:nTR)
+  {
+    thetaj <- Theta_ROC[j]
+    indcolj <- (0:2)*nTR + j
+    #
+    MatACC[, indcolj[1]] <- thetaj * MatSeSp[, 1] + (1-thetaj) * MatSeSp[, 2]
+    MatACC[, indcolj[2]] <- thetaj * MatSeSp[, 3] + (1-thetaj) * MatSeSp[, 4]
+    MatACC[, indcolj[3]] <- thetaj * MatSeSp[, (5+2*(j-1))] + (1-thetaj) * MatSeSp[, (6+2*(j-1))]
+    #
+    MatVp[, indcolj[1]] <- ((1-thetaj)*MatSeSp[, 2]) / ((1-thetaj)*MatSeSp[, 2] + thetaj*(1-MatSeSp[, 1]-MatInd01[, 2]))
+    MatVp[, indcolj[2]] <- ((1-thetaj)*MatSeSp[, 4]) / ((1-thetaj)*MatSeSp[, 4] + thetaj*(1-MatSeSp[, 3]-MatInd01[, 4]))
+    MatVp[, indcolj[3]] <- ((1-thetaj)*MatSeSp[, (6+2*(j-1))]) / ((1-thetaj)*MatSeSp[, (6+2*(j-1))] + thetaj*(1-MatSeSp[, (5+2*(j-1))]-MatInd01[, (6+2*(j-1))]))
+    #
+    MatVn[, indcolj[1]] <- (thetaj*MatSeSp[, 1]) / (thetaj*MatSeSp[, 1] + (1-thetaj)*(1-MatSeSp[, 2]-MatInd01[, 1]))
+    MatVn[, indcolj[2]] <- (thetaj*MatSeSp[, 3]) / (thetaj*MatSeSp[, 3] + (1-thetaj)*(1-MatSeSp[, 4]-MatInd01[, 3]))
+    MatVn[, indcolj[3]] <- (thetaj*MatSeSp[, (5+2*(j-1))]) / (thetaj*MatSeSp[, (5+2*(j-1))] + (1-thetaj)*(1-MatSeSp[, (5+2*(j-1))]-MatInd01[, (6+2*(j-1))]))
+    #
+    PTK[, indcolj[1]] <- thetaj*MatSeSp[, 1] + (1-thetaj)* (1-MatSeSp[, 2] - MatInd01[, 1])
+    PTK[, indcolj[2]] <- thetaj*MatSeSp[, 3] + (1-thetaj)* (1-MatSeSp[, 4] - MatInd01[, 3])
+    PTK[, indcolj[3]] <- thetaj*MatSeSp[, (5+2*(j-1))] + (1-thetaj)* (1-MatSeSp[, (6+2*(j-1))] - MatInd01[, (5+2*(j-1))])
+    #
+    IK[, indcolj[1]] <- (1-thetaj)*MatInd01[, 1] + thetaj*MatInd01[, 2]
+    IK[, indcolj[2]] <- (1-thetaj)*MatInd01[, 3] + thetaj*MatInd01[, 4]
+    IK[, indcolj[3]] <- (1-thetaj)*MatInd01[, (5+2*(j-1))] + thetaj*MatInd01[, (6+2*(j-1))]
+    #
+  }
+  MatMK <- MatVp + MatVn - 1
+  #
+  Nomcsv <-  paste("output_Theoretical/MatACC_n", n, "_p", p, "_q", q, ".csv", sep="")
+  write.csv2(MatACC, Nomcsv, quote=F, row.names=T)
+  Nomcsv <-  paste("output_Theoretical/MatVPP_n", n, "_p", p, "_q", q, ".csv", sep="")
+  write.csv2(MatVp, Nomcsv, quote=F, row.names=T)
+  Nomcsv <-  paste("output_Theoretical/MatVPN_n", n, "_p", p, "_q", q, ".csv", sep="")
+  write.csv2(MatVn, Nomcsv, quote=F, row.names=T)
+  Nomcsv <-  paste("output_Theoretical/MatMK_n", n, "_p", p, "_q", q, ".csv", sep="")
+  write.csv2(MatMK, Nomcsv, quote=F, row.names=T)
+  #
+  ETK <- IK/2 + PTK
+  VTK <- IK/4 + PTK - ETK^2
+  #
+  for (j in 1:nTR)
+  {
+    thetaj <- Theta_ROC[j]
+    indcolj <- (0:2)*nTR + j
+    #
+    Num <- MatSeSp[, 1] + MatInd01[, 2]/2 - ETK[, j]
+    Denom <- thetaj * (1-thetaj) * VTK[, j]
+    MatMCC[, indcolj[1]] <- thetaj *  Num / sqrt(Denom)
+    #
+    Num <- MatSeSp[, 3] + MatInd01[, 4]/2 - ETK[, (j+nTR)]
+    Denom <- thetaj * (1-thetaj) * VTK[, (j+nTR)]
+    MatMCC[, indcolj[2]] <- thetaj *  Num / sqrt(Denom)
+    #
+    Num <- MatSeSp[, (5+2*(j-1))] + MatInd01[, (6+2*(j-1))]/2 - ETK[, (j+2*nTR)]
+    Denom <- thetaj * (1-thetaj) * VTK[, (j+2*nTR)]
+    MatMCC[, indcolj[3]] <- thetaj *  Num / sqrt(Denom)
+  }
+  Nomcsv <-  paste("output_Theoretical/MatMCC_n", n, "_p", p, "_q", q, ".csv", sep="")
+  write.csv2(MatMCC, Nomcsv, quote=F, row.names=T)
+  #
+  # Graphics, Figure2
+  #
+  ylab <- "Informedness accuracy (IF)"
+  xleg <- 0.35
+  yleg <- mean(MatIF)
+  Namejpg <- paste("output_Theoretical/Plot_IF_n", n, "_p", p, "_q", q, ".jpg", sep="")
+  jpeg(Namejpg, quality=quality, width=width3, height=height)
+  par(cex=cex, cex.axis=nc1, cex.lab=nc2, cex.main=nc1, mar=c(5,5,4,2))
+  matplot(as.numeric(rownames(MatIF)), MatIF[,c(2,1,3:ncol(MatIF))], 
+          xlab="", ylab="",
+          lty=c(1, 2, rep(3, nTR)),
+          col=c(ColM, ColA, couleursL), type="l", 
+          lwd=c(4, 3, rep(4, nTR)))
+  mtext(side = 2, text = ylab, line=3, adj=0.45, cex = 1.8*nc)
+  mtext(side = 1, text = xlab, line=3, adj=0.5, cex = 1.8*nc)
+  legend(x=xleg, y=yleg, col=c(ColA, ColM, couleursL), 
+         lwd=c(3,4, rep(4, nTR)),
+         legend=c("Average", "Median", paste("Most Likely", Theta_ROC, sep="_")), 
+         lty=c(2,1, rep(3, nTR)))
+  dev.off()
+  MethR <- c("ACC", "MK", "MCC")
+  ylabR <- c("Accuracy (ACC)", "Markedness (MK)", 
+             "Matthews Correlation Coefficient (MCC)")
+  for (m in 1:length(MethR))
+  {
+    Meth <- MethR[m]
+    ylab <- ylabR[m]
+    xleg <- 0.4
+    if (m==1)
+    {
+      MatROC <- MatACC
+    }
+    if (m==2)
+    {
+      MatROC <- MatMK
+    }
+    if (m==3)
+    {
+      MatROC <- MatMCC
+    }
+    OrdCol <- c( (nTR+1):(2*nTR), 1:nTR, (2*nTR+1) :ncol(MatROC))
+    yleg <- mean(MatROC)
+    Namejpg <- paste("output_Theoretical/Plot_", Meth, "_n", n, "_p", p, "_q", q, ".jpg", sep="")
+    jpeg(Namejpg, quality=quality, width=width3, height=height)
+    par(cex=cex, cex.axis=nc1, cex.lab=nc2, cex.main=nc1, mar=c(5,5,4,2))
+    matplot(as.numeric(rownames(MatROC)), MatROC[, OrdCol], 
+            xlab="", ylab="",
+            lty=rep(c(1,2,3), each=nTR),
+            col=c(couleursM, couleursA, couleursL), type="l", 
+            lwd=rep(c(4,3,4), each=nTR))
+    mtext(side = 2, text = ylab, line=3, adj=0.45, cex = 1.8*nc)
+    mtext(side = 1, text = xlab, line=3, adj=0.5, cex = 1.8*nc)
+    legend(x=xleg, y=yleg, col=c(couleursA, couleursM, couleursL), 
+           lwd=rep(c(3,4,4), each=nTR),
+           legend=c(paste("A", Theta_ROC, sep="_"), 
+           paste("M", Theta_ROC, sep="_"), 
+           paste("L", Theta_ROC, sep="_")), 
+           lty=rep(c(2,1,3), each=nTR))
+    dev.off()
+  }
+}
+}    
+```
+
+
