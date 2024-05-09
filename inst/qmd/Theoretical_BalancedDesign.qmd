@@ -20,6 +20,11 @@ To remove the change after rendering the quarto while working on the package, yo
 setwd(paste0(getwd(), "/../.."))
 ```
 
+Create the `output_Theoretical` directory if it does not exist:
+```{r}
+if(!dir.exists("output_Theoretical")) dir.create("output_Theoretical")
+```
+
 
 # Set fixed parameters and the design of the data
 

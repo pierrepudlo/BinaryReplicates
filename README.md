@@ -101,3 +101,4 @@ Y_B <- bayesian_scorings(fit) # scorings
 T_B <- classification_from_scoring(Y_B, vL = .4, vU = .6) # classifications
 theta_B <- bayesian_prevalence_estimate(fit) # prevalence estimate
 ```
+

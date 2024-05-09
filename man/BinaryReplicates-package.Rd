@@ -4,7 +4,7 @@
 \name{BinaryReplicates-package}
 \alias{BinaryReplicates-package}
 \alias{BinaryReplicates}
-\title{BinaryReplicates: What the Package Does (One Line, Title Case)}
+\title{BinaryReplicates: Dealing with Binary Replicates}
 \description{
 What the package does (one paragraph).
 }

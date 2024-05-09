@@ -7,7 +7,7 @@
 BayesianFit(
   ni,
   si,
-  prior = list(a_FP = 0.5, b_FP = 0.5, a_FN = 0.5, b_FN = 0.5, a_T = 0.5, b_T = 0.5),
+  prior = list(a_FP = 2, b_FP = 2, a_FN = 2, b_FN = 2, a_T = 0.5, b_T = 0.5),
   ...
 )
 }

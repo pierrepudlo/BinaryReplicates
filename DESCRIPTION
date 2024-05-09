@@ -1,6 +1,6 @@
 Package: BinaryReplicates
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Dealing with Binary Replicates
+Version: 0.1
 Authors@R: 
     c(person("Pierre", "Pudlo", , "pierre.pudlo@univ-amu.fr", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-0995-716X")),
@@ -15,7 +15,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Biarch: true
 Depends: 
-    R (>= 3.4.0)
+    R (>= 3.5.0)
 Imports: 
     methods,
     Rcpp (>= 0.12.0),
