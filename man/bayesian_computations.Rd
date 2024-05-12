@@ -3,42 +3,45 @@
 \name{bayesian_computations}
 \alias{bayesian_computations}
 \alias{credint}
-\alias{bayesian_scorings}
+\alias{bayesian_scoring}
 \alias{bayesian_prevalence_estimate}
 \title{Bayesian computations}
 \usage{
-credint(fit, alpha = 0.05)
+credint(fit, level = 0.9)
 
-bayesian_scorings(fit)
+bayesian_scoring(fit)
 
 bayesian_prevalence_estimate(fit)
 }
 \arguments{
-\item{fit}{The stanfit object return by BayesianFit}
+\item{fit}{The \code{stanfit} object return by \link{BayesianFit}}
 
-\item{alpha}{Error level of the credible intervals}
+\item{level}{Posterior probability of the credible intervals}
 }
 \value{
 The \code{credint} function returns the credible interval bounds for the fixed
-parameters of the Bayesian model. The default error level is 0.05.
+parameters of the Bayesian model. The default posterior probability is 90\%.
 
-The \code{bayesian_scoring} function returns the vector of Bayesian scorings.
-These scorings are the posterior probabilities
-that the true latent T\link{i} is equal to 1.
+The \code{bayesian_scoring} function returns the Bayesian scores.
+These scores are the posterior probabilities
+that the true latent \eqn{T_i}'s are equal to 1.
 
 The \code{bayesian_prevalence_estimate} function returns the posterior mean of the
-posterior distribution on the prevalence of T = 1.
+posterior distribution on the prevalence of \eqn{T_i = 1}.
 }
 \description{
-Get credible intervals for the fixed parameters of the Bayesian model,
-the Bayesian scorings, and the Bayesian prevalence estimate.
+Get credible intervals, Bayesian scores, and prevalence estimate
+from the \code{stanfit} object returned by \link{BayesianFit}.
+}
+\details{
+See \link{BayesianFit} for details on the Bayesian model.
 }
 \examples{
 data("periodontal")
 theta <- mean(periodontal$ti)
 fit <- BayesianFit(periodontal$ni, periodontal$si, chains = 2, iter = 5000)
 credint(fit)
-Y_B <- bayesian_scorings(fit)
+Y_B <- bayesian_scoring(fit)
 T_B <- classification_from_scoring(Y_B, .4, .6)
 theta_B <- bayesian_prevalence_estimate(fit)
 cat("The Bayesian prevalence estimate is ", theta_B, "\n")
@@ -46,5 +49,5 @@ cat("The prevalence in the data is ", theta, "\n")
 
 }
 \seealso{
-\code{\link{classification_from_scoring}}
+\code{\link{classify_with_scores}}, \code{\link{BayesianFit}}
 }

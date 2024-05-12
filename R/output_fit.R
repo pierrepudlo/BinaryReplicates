@@ -1,29 +1,30 @@
-#' Get credible intervals for the fixed parameters of the Bayesian model,
-#' the Bayesian scorings, and the Bayesian prevalence estimate.
+#' Get credible intervals, Bayesian scores, and prevalence estimate
+#' from the `stanfit` object returned by [BayesianFit].
 #'
 #' @name bayesian_computations
 #' @title Bayesian computations
-#' @param fit The stanfit object return by BayesianFit
-#' @param alpha Error level of the credible intervals
+#' @param fit The `stanfit` object return by [BayesianFit]
+#' @param level Posterior probability of the credible intervals
+#' @details See [BayesianFit] for details on the Bayesian model.
 #' @return
 #' The `credint` function returns the credible interval bounds for the fixed
-#' parameters of the Bayesian model. The default error level is 0.05.
+#' parameters of the Bayesian model. The default posterior probability is 90%.
 #'
-#' The `bayesian_scoring` function returns the vector of Bayesian scorings.
-#' These scorings are the posterior probabilities
-#' that the true latent T[i] is equal to 1.
+#' The `bayesian_scoring` function returns the Bayesian scores.
+#' These scores are the posterior probabilities
+#' that the true latent \eqn{T_i}'s are equal to 1.
 #'
 #' The `bayesian_prevalence_estimate` function returns the posterior mean of the
-#' posterior distribution on the prevalence of T = 1.
+#' posterior distribution on the prevalence of \eqn{T_i = 1}.
 #'
-#' @seealso \code{\link{classification_from_scoring}}
+#' @seealso \code{\link{classify_with_scores}}, \code{\link{BayesianFit}}
 #'
 #' @examples
 #' data("periodontal")
 #' theta <- mean(periodontal$ti)
 #' fit <- BayesianFit(periodontal$ni, periodontal$si, chains = 2, iter = 5000)
 #' credint(fit)
-#' Y_B <- bayesian_scorings(fit)
+#' Y_B <- bayesian_scoring(fit)
 #' T_B <- classification_from_scoring(Y_B, .4, .6)
 #' theta_B <- bayesian_prevalence_estimate(fit)
 #' cat("The Bayesian prevalence estimate is ", theta_B, "\n")
@@ -31,10 +32,11 @@
 #'
 #' @rdname bayesian_computations
 #' @export
-credint <- function(fit, alpha = .05) {
+credint <- function(fit, level = .9) {
   # Extract the fixed parameters
   pars <- rstan::extract(fit, pars = c("p", "q", "theta"))
   # Compute the credible intervals
+  alpha <- 1 - level
   out <- lapply(pars, function(x) quantile(x, c(alpha/2, 1-alpha/2)))
   out <- t(as.data.frame(out))
   out <- as.data.frame(out)
@@ -46,7 +48,7 @@ credint <- function(fit, alpha = .05) {
 
 #' @rdname bayesian_computations
 #' @export
-bayesian_scorings <- function(fit){
+bayesian_scoring <- function(fit){
   # Extract the latent variable
   Ti <- rstan::extract(fit, pars = "Ti")$Ti
   # Compute the posterior probability

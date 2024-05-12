@@ -1,4 +1,17 @@
-// Set vectors length
+functions{
+  // The predictive probability that T_i = 1, given the data and the parameters.
+  real pred(int s, int n, real p, real q, real theta){
+      real numerateur;
+      real denominateur;
+      numerateur = theta * exp(binomial_lpmf(s | n, 1-q));
+      denominateur = numerateur +
+                     (1-theta) * exp(binomial_lpmf(s | n, p));
+    return numerateur / denominateur;
+  }
+}
+
+
+// The data accepted by the model.
 data {
   int n;
   array[n] int si;
@@ -36,13 +49,8 @@ model {
 // Output
 generated quantities {
   int Ti[n];
-  real numerateur;
-  real denominateur;
   for(i in 1:n){
-    numerateur = theta * exp(binomial_lpmf(si[i]|ni[i], 1-q));
-    denominateur = numerateur +
-                   (1-theta) * exp(binomial_lpmf(si[i]|ni[i], p));
-    Ti[i] = bernoulli_rng( numerateur / denominateur);
+    Ti[i] = bernoulli_rng(pred(si[i], ni[i], p, q, theta));
   }
 }
 

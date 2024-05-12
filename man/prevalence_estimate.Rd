@@ -2,23 +2,24 @@
 % Please edit documentation in R/nonBayesian_based.R
 \name{prevalence_estimate}
 \alias{prevalence_estimate}
-\title{Compute the average,median-based prevalence estimate based on the scorings}
+\title{Compute the average- and median-based prevalence estimates based on the scores}
 \usage{
-prevalence_estimate(scorings)
+prevalence_estimate(scores)
 }
 \arguments{
-\item{scorings}{A numeric vector of the scorings}
+\item{scores}{Numeric vector of the scores, computed with
+\link{average_scoring} or \link{median_scoring}}
 }
 \value{
-A numeric value of the prevalence estimator
+A numeric value of the prevalence estimate
 }
 \description{
-Compute the average,median-based prevalence estimate based on the scorings
+Compute the average- and median-based prevalence estimates based on the scores
 }
 \examples{
 data("periodontal")
 theta <- mean(periodontal$ti)
-Y_A <- average_based_scorings(periodontal$ni, periodontal$si)
+Y_A <- average_scoring(periodontal$ni, periodontal$si)
 hat_theta_A <- prevalence_estimate(Y_A)
 cat("The average-based prevalence estimate is ", hat_theta_A, "\n")
 cat("The prevalence in the dataset is ", theta, "\n")

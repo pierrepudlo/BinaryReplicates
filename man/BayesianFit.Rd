@@ -12,17 +12,41 @@ BayesianFit(
 )
 }
 \arguments{
-\item{ni}{Numeric or integer vector of n_i values.}
+\item{ni}{Numeric vector of \eqn{n_i}'s, the total numbers of replicates for each individual}
 
-\item{si}{Numeric or integer vector of S_i values.}
+\item{si}{Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual}
 
-\item{prior}{A list of prior parameters for the model.}
+\item{prior}{A list of prior parameters for the model, see Details.}
 
 \item{...}{Arguments passed to \code{rstan::sampling} (e.g. iter, chains).}
 }
 \value{
-An object of class \code{stanfit} returned by \code{rstan::sampling}
+An object of class \code{stanfit} returned by \code{rstan::sampling}.
+
+The Stan model samples the posterior distribution of the fixed parameters \eqn{p},
+\eqn{q} and \eqn{\theta}. It also generates the latent variables \eqn{T_i} according
+to their predictive distribution.
 }
 \description{
 Fit the Bayesian model for Binary Replicates
+}
+\details{
+The model is a Bayesian model for binary replicates.
+The prior distribution is as follows:
+
+\itemize{
+\item The false positivity rate: \eqn{p \sim \text{Beta}(a_{FP}, b_{FP})}
+\item The false negativity rate: \eqn{q \sim \text{Beta}(a_{FN}, b_{FN})}
+\item The prevalence: \eqn{\theta \sim \text{Beta}(a_T, b_T)}
+}
+
+The statistical model considers that the true status are the latent
+\deqn{T_i \sim \text{Bernoulli}(\theta).}
+
+And, given the true status \eqn{T_i}, the number of positive replicates is
+\deqn{S_i \sim \text{Binomial}(n_i, T_i(1-q)+(1-T_i)p).}
+}
+\seealso{
+\link{credint}, \link{bayesian_scorings}, \link{classification_from_scoring},
+\link{bayesian_prevalence_estimate}
 }

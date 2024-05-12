@@ -8,10 +8,10 @@
 #'
 #' @usage data(periodontal)
 #'
-#' @format A data frame with 48 rows and 3 variables.:
+#' @format A data frame with 50 rows and 3 variables:
 #' \describe{
-#'  \item{ni}{Total number of sites tested}
-#'  \item{si}{Number of positive tests}
+#'  \item{ni}{Total numbers of sites tested for each individual}
+#'  \item{si}{Number of positive tests for each individual}
 #'  \item{ti}{Status of the individual (1=infected, 0=non infected)}
 #' }
 #'
