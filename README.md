@@ -6,7 +6,7 @@ As described in the paper, the package provides functions to compute:
 
 - the average-based scorings and classifications
 - the median-based scorings and classifications
-- the most likely-based scorings and classifications
+- the likelihood-based scorings and classifications
 - the bayesian-based scorings and classifications
 
 
