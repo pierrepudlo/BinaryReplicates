@@ -14,8 +14,8 @@ functions{
 // The data accepted by the model.
 data {
   int n;
-  array[n] int si;
-  array[n] int ni;
+  int si[n];
+  int ni[n];
   real a_FP;
   real b_FP;
   real a_FN;
