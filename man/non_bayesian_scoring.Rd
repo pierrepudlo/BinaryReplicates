@@ -30,14 +30,22 @@ A numeric vector of the scores
 \description{
 Compute the average-, median- and likelihood-based scores
 }
+\note{
+For likelihood based scores, the values of \eqn{\theta}, \eqn{p} and
+\eqn{q} are required. Consequently likelihood scoring is not reachable in
+practice.
+}
 \examples{
 data("periodontal")
 Y_A <- average_scoring(periodontal$ni, periodontal$si)
 Y_M <- median_scoring(periodontal$ni, periodontal$si)
-theta <- mean(periodontal$ti)
-cat("The prevalence in the data is ", theta, "\n")
-p <- mean(Y_A[periodontal$ti == 0])
-q <- mean(1-Y_A[periodontal$ti == 1])
-Y_L <- likelihood_scoring(periodontal$ni, periodontal$si, theta, p, q)
+# In order to compute the likelihood-based scores, we need to know theta,
+# p and q which can be estimated in this example as follows:
+theta_hat <- mean(periodontal$ti)
+cat("The prevalence in the data is ", theta_hat, "\n")
+p_hat <- with(periodontal, sum(si[ti==0])/sum(ni[ti==0]))
+q_hat <- with(periodontal, 1 - sum(si[ti==1])/sum(ni[ti==1]))
+Y_L <- likelihood_scoring(periodontal$ni, periodontal$si,
+                          theta_hat, p_hat, q_hat)
 
 }

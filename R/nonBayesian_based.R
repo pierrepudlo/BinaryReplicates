@@ -8,15 +8,22 @@
 #' @param q The false negativity rate
 #' @return A numeric vector of the scores
 #'
+#' @note For likelihood based scores, the values of \eqn{\theta}, \eqn{p} and
+#' \eqn{q} are required. Consequently likelihood scoring is not reachable in
+#' practice.
+#'
 #' @examples
 #' data("periodontal")
 #' Y_A <- average_scoring(periodontal$ni, periodontal$si)
 #' Y_M <- median_scoring(periodontal$ni, periodontal$si)
-#' theta <- mean(periodontal$ti)
-#' cat("The prevalence in the data is ", theta, "\n")
-#' p <- mean(Y_A[periodontal$ti == 0])
-#' q <- mean(1-Y_A[periodontal$ti == 1])
-#' Y_L <- likelihood_scoring(periodontal$ni, periodontal$si, theta, p, q)
+#' # In order to compute the likelihood-based scores, we need to know theta,
+#' # p and q which can be estimated in this example as follows:
+#' theta_hat <- mean(periodontal$ti)
+#' cat("The prevalence in the data is ", theta_hat, "\n")
+#' p_hat <- with(periodontal, sum(si[ti==0])/sum(ni[ti==0]))
+#' q_hat <- with(periodontal, 1 - sum(si[ti==1])/sum(ni[ti==1]))
+#' Y_L <- likelihood_scoring(periodontal$ni, periodontal$si,
+#'                           theta_hat, p_hat, q_hat)
 #'
 #' @name non_bayesian_scoring
 #'
@@ -34,6 +41,7 @@ median_scoring <- function(ni, si) {
 
 
 #' @rdname non_bayesian_scoring
+#' @importFrom stats dbinom
 #' @export
 likelihood_scoring <- function(ni, si, theta, p, q) {
   theta*dbinom(si, ni, 1-q) /
@@ -58,12 +66,20 @@ classify_with_scores <- function(scores, vL, vU) {
 #'               [average_scoring] or [median_scoring]
 #' @return A numeric value of the prevalence estimate
 #'
+#' @note We have showed that the median-based prevalence estimator is better
+#' than the average-based prevalence estimator in terms of bias, except when
+#' the prevalence is in an interval \eqn{J}. And the length of \eqn{J} is small when the
+#'  number of replicates is always large.
+#'
 #' @examples
 #' data("periodontal")
 #' theta <- mean(periodontal$ti)
 #' Y_A <- average_scoring(periodontal$ni, periodontal$si)
+#' Y_M <- median_scoring(periodontal$ni, periodontal$si)
 #' hat_theta_A <- prevalence_estimate(Y_A)
+#' hat_theta_M <- prevalence_estimate(Y_M)
 #' cat("The average-based prevalence estimate is ", hat_theta_A, "\n")
+#' cat("The median-based prevalence estimate is ", hat_theta_M, "\n")
 #' cat("The prevalence in the dataset is ", theta, "\n")
 #'
 #' @export

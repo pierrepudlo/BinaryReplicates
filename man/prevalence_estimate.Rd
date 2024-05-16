@@ -16,12 +16,21 @@ A numeric value of the prevalence estimate
 \description{
 Compute the average- and median-based prevalence estimates based on the scores
 }
+\note{
+We have showed that the median-based prevalence estimator is better
+than the average-based prevalence estimator in terms of bias, except when
+the prevalence is in an interval \eqn{J}. And the length of \eqn{J} is small when the
+number of replicates is always large.
+}
 \examples{
 data("periodontal")
 theta <- mean(periodontal$ti)
 Y_A <- average_scoring(periodontal$ni, periodontal$si)
+Y_M <- median_scoring(periodontal$ni, periodontal$si)
 hat_theta_A <- prevalence_estimate(Y_A)
+hat_theta_M <- prevalence_estimate(Y_M)
 cat("The average-based prevalence estimate is ", hat_theta_A, "\n")
+cat("The median-based prevalence estimate is ", hat_theta_M, "\n")
 cat("The prevalence in the dataset is ", theta, "\n")
 
 }

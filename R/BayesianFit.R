@@ -27,7 +27,7 @@
 #' \eqn{q} and \eqn{\theta}. It also generates the latent variables \eqn{T_i} according
 #' to their predictive distribution.
 #'
-#' @seealso [credint], [bayesian_scorings], [classification_from_scoring],
+#' @seealso [credint], [bayesian_scoring], [classify_with_scores],
 #' [bayesian_prevalence_estimate]
 BayesianFit <- function(ni, si,
                     prior = list(a_FP=2, b_FP=2,

@@ -47,6 +47,6 @@ And, given the true status \eqn{T_i}, the number of positive replicates is
 \deqn{S_i \sim \text{Binomial}(n_i, T_i(1-q)+(1-T_i)p).}
 }
 \seealso{
-\link{credint}, \link{bayesian_scorings}, \link{classification_from_scoring},
+\link{credint}, \link{bayesian_scoring}, \link{classify_with_scores},
 \link{bayesian_prevalence_estimate}
 }
