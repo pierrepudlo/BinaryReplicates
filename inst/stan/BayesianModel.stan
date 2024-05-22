@@ -49,8 +49,10 @@ model {
 // Output
 generated quantities {
   int Ti[n];
+  real pi[n];
   for(i in 1:n){
-    Ti[i] = bernoulli_rng(pred(si[i], ni[i], p, q, theta));
+    pi[i] = pred(si[i], ni[i], p, q, theta);
+    Ti[i] = bernoulli_rng(pi[i]);
   }
 }
 

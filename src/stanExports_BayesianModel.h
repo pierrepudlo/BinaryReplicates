@@ -27,15 +27,17 @@ namespace model_BayesianModel_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 32> locations_array__ =
+static constexpr std::array<const char*, 35> locations_array__ =
   {" (found before start of program)",
   " (in 'BayesianModel', line 26, column 2 to column 28)",
   " (in 'BayesianModel', line 27, column 2 to column 28)",
   " (in 'BayesianModel', line 28, column 2 to column 31)",
   " (in 'BayesianModel', line 46, column 2 to column 12)",
-  " (in 'BayesianModel', line 48, column 4 to column 59)",
-  " (in 'BayesianModel', line 47, column 15 to line 49, column 3)",
-  " (in 'BayesianModel', line 47, column 2 to line 49, column 3)",
+  " (in 'BayesianModel', line 47, column 2 to column 13)",
+  " (in 'BayesianModel', line 49, column 4 to column 44)",
+  " (in 'BayesianModel', line 50, column 4 to column 33)",
+  " (in 'BayesianModel', line 48, column 15 to line 51, column 3)",
+  " (in 'BayesianModel', line 48, column 2 to line 51, column 3)",
   " (in 'BayesianModel', line 33, column 2 to column 23)",
   " (in 'BayesianModel', line 34, column 2 to column 23)",
   " (in 'BayesianModel', line 35, column 2 to column 25)",
@@ -54,6 +56,7 @@ static constexpr std::array<const char*, 32> locations_array__ =
   " (in 'BayesianModel', line 21, column 2 to column 11)",
   " (in 'BayesianModel', line 22, column 2 to column 11)",
   " (in 'BayesianModel', line 46, column 9 to column 10)",
+  " (in 'BayesianModel', line 47, column 10 to column 11)",
   " (in 'BayesianModel', line 4, column 6 to column 22)",
   " (in 'BayesianModel', line 5, column 6 to column 24)",
   " (in 'BayesianModel', line 6, column 6 to column 58)",
@@ -85,13 +88,13 @@ pred(const int& s, const int& n, const T2__& p, const T3__& q, const T4__&
   try {
     local_scalar_t__ numerateur = DUMMY_VAR__;
     local_scalar_t__ denominateur = DUMMY_VAR__;
-    current_statement__ = 28;
+    current_statement__ = 31;
     numerateur = (theta *
       stan::math::exp(stan::math::binomial_lpmf<false>(s, n, (1 - q))));
-    current_statement__ = 29;
+    current_statement__ = 32;
     denominateur = (numerateur + ((1 - theta) *
       stan::math::exp(stan::math::binomial_lpmf<false>(s, n, p))));
-    current_statement__ = 30;
+    current_statement__ = 33;
     return (numerateur / denominateur);
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -130,66 +133,68 @@ public:
     try {
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      current_statement__ = 14;
+      current_statement__ = 16;
       context__.validate_dims("data initialization", "n", "int",
         std::vector<size_t>{});
       n = std::numeric_limits<int>::min();
-      current_statement__ = 14;
-      n = context__.vals_i("n")[(1 - 1)];
-      current_statement__ = 15;
-      stan::math::validate_non_negative_index("si", "n", n);
       current_statement__ = 16;
+      n = context__.vals_i("n")[(1 - 1)];
+      current_statement__ = 17;
+      stan::math::validate_non_negative_index("si", "n", n);
+      current_statement__ = 18;
       context__.validate_dims("data initialization", "si", "int",
         std::vector<size_t>{static_cast<size_t>(n)});
       si = std::vector<int>(n, std::numeric_limits<int>::min());
-      current_statement__ = 16;
-      si = context__.vals_i("si");
-      current_statement__ = 17;
-      stan::math::validate_non_negative_index("ni", "n", n);
       current_statement__ = 18;
+      si = context__.vals_i("si");
+      current_statement__ = 19;
+      stan::math::validate_non_negative_index("ni", "n", n);
+      current_statement__ = 20;
       context__.validate_dims("data initialization", "ni", "int",
         std::vector<size_t>{static_cast<size_t>(n)});
       ni = std::vector<int>(n, std::numeric_limits<int>::min());
-      current_statement__ = 18;
+      current_statement__ = 20;
       ni = context__.vals_i("ni");
-      current_statement__ = 19;
+      current_statement__ = 21;
       context__.validate_dims("data initialization", "a_FP", "double",
         std::vector<size_t>{});
       a_FP = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 19;
+      current_statement__ = 21;
       a_FP = context__.vals_r("a_FP")[(1 - 1)];
-      current_statement__ = 20;
+      current_statement__ = 22;
       context__.validate_dims("data initialization", "b_FP", "double",
         std::vector<size_t>{});
       b_FP = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 20;
+      current_statement__ = 22;
       b_FP = context__.vals_r("b_FP")[(1 - 1)];
-      current_statement__ = 21;
+      current_statement__ = 23;
       context__.validate_dims("data initialization", "a_FN", "double",
         std::vector<size_t>{});
       a_FN = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 21;
+      current_statement__ = 23;
       a_FN = context__.vals_r("a_FN")[(1 - 1)];
-      current_statement__ = 22;
+      current_statement__ = 24;
       context__.validate_dims("data initialization", "b_FN", "double",
         std::vector<size_t>{});
       b_FN = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 22;
+      current_statement__ = 24;
       b_FN = context__.vals_r("b_FN")[(1 - 1)];
-      current_statement__ = 23;
+      current_statement__ = 25;
       context__.validate_dims("data initialization", "a_T", "double",
         std::vector<size_t>{});
       a_T = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 23;
+      current_statement__ = 25;
       a_T = context__.vals_r("a_T")[(1 - 1)];
-      current_statement__ = 24;
+      current_statement__ = 26;
       context__.validate_dims("data initialization", "b_T", "double",
         std::vector<size_t>{});
       b_T = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 24;
+      current_statement__ = 26;
       b_T = context__.vals_r("b_T")[(1 - 1)];
-      current_statement__ = 25;
+      current_statement__ = 27;
       stan::math::validate_non_negative_index("Ti", "n", n);
+      current_statement__ = 28;
+      stan::math::validate_non_negative_index("pi", "n", n);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -235,15 +240,15 @@ public:
       theta = in__.template read_constrain_lub<local_scalar_t__,
                 jacobian__>(0, 1, lp__);
       {
-        current_statement__ = 8;
-        lp_accum__.add(stan::math::beta_lpdf<propto__>(p, a_FP, b_FP));
-        current_statement__ = 9;
-        lp_accum__.add(stan::math::beta_lpdf<propto__>(q, a_FN, b_FN));
         current_statement__ = 10;
+        lp_accum__.add(stan::math::beta_lpdf<propto__>(p, a_FP, b_FP));
+        current_statement__ = 11;
+        lp_accum__.add(stan::math::beta_lpdf<propto__>(q, a_FN, b_FN));
+        current_statement__ = 12;
         lp_accum__.add(stan::math::beta_lpdf<propto__>(theta, a_T, b_T));
-        current_statement__ = 13;
+        current_statement__ = 15;
         for (int i = 1; i <= n; ++i) {
-          current_statement__ = 11;
+          current_statement__ = 13;
           lp_accum__.add(stan::math::log(((theta *
                            stan::math::exp(
                              stan::math::binomial_lpmf<false>(
@@ -322,17 +327,24 @@ public:
       }
       std::vector<int> Ti =
         std::vector<int>(n, std::numeric_limits<int>::min());
-      current_statement__ = 7;
+      std::vector<double> pi =
+        std::vector<double>(n, std::numeric_limits<double>::quiet_NaN());
+      current_statement__ = 9;
       for (int i = 1; i <= n; ++i) {
-        current_statement__ = 5;
+        current_statement__ = 6;
+        stan::model::assign(pi,
+          pred(stan::model::rvalue(si, "si", stan::model::index_uni(i)),
+            stan::model::rvalue(ni, "ni", stan::model::index_uni(i)), p, q,
+            theta, pstream__), "assigning variable pi",
+          stan::model::index_uni(i));
+        current_statement__ = 7;
         stan::model::assign(Ti,
           stan::math::bernoulli_rng(
-            pred(stan::model::rvalue(si, "si", stan::model::index_uni(i)),
-              stan::model::rvalue(ni, "ni", stan::model::index_uni(i)), p, q,
-              theta, pstream__), base_rng__), "assigning variable Ti",
-          stan::model::index_uni(i));
+            stan::model::rvalue(pi, "pi", stan::model::index_uni(i)),
+            base_rng__), "assigning variable Ti", stan::model::index_uni(i));
       }
       out__.write(Ti);
+      out__.write(pi);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -414,7 +426,7 @@ public:
     names__ = std::vector<std::string>{"p", "q", "theta"};
     if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {
-      std::vector<std::string> temp{"Ti"};
+      std::vector<std::string> temp{"Ti", "pi"};
       names__.reserve(names__.size() + temp.size());
       names__.insert(names__.end(), temp.begin(), temp.end());
     }
@@ -428,7 +440,8 @@ public:
     if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {
       std::vector<std::vector<size_t>>
-        temp{std::vector<size_t>{static_cast<size_t>(n)}};
+        temp{std::vector<size_t>{static_cast<size_t>(n)},
+             std::vector<size_t>{static_cast<size_t>(n)}};
       dimss__.reserve(dimss__.size() + temp.size());
       dimss__.insert(dimss__.end(), temp.begin(), temp.end());
     }
@@ -446,6 +459,10 @@ public:
         param_names__.emplace_back(std::string() + "Ti" + '.' +
           std::to_string(sym1__));
       }
+      for (int sym1__ = 1; sym1__ <= n; ++sym1__) {
+        param_names__.emplace_back(std::string() + "pi" + '.' +
+          std::to_string(sym1__));
+      }
     }
   }
   inline void
@@ -461,13 +478,17 @@ public:
         param_names__.emplace_back(std::string() + "Ti" + '.' +
           std::to_string(sym1__));
       }
+      for (int sym1__ = 1; sym1__ <= n; ++sym1__) {
+        param_names__.emplace_back(std::string() + "pi" + '.' +
+          std::to_string(sym1__));
+      }
     }
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"p\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"q\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"theta\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"Ti\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(n) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"p\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"q\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"theta\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"Ti\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(n) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"},{\"name\":\"pi\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(n) + ",\"element_type\":{\"name\":\"real\"}},\"block\":\"generated_quantities\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"p\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"q\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"theta\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"Ti\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(n) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"p\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"q\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"theta\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"Ti\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(n) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"},{\"name\":\"pi\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(n) + ",\"element_type\":{\"name\":\"real\"}},\"block\":\"generated_quantities\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void
@@ -478,7 +499,7 @@ public:
               pstream = nullptr) const {
     const size_t num_params__ = ((1 + 1) + 1);
     const size_t num_transformed = emit_transformed_parameters * (0);
-    const size_t num_gen_quantities = emit_generated_quantities * (n);
+    const size_t num_gen_quantities = emit_generated_quantities * ((n + n));
     const size_t num_to_write = num_params__ + num_transformed +
       num_gen_quantities;
     std::vector<int> params_i;
@@ -495,7 +516,7 @@ public:
               pstream = nullptr) const {
     const size_t num_params__ = ((1 + 1) + 1);
     const size_t num_transformed = emit_transformed_parameters * (0);
-    const size_t num_gen_quantities = emit_generated_quantities * (n);
+    const size_t num_gen_quantities = emit_generated_quantities * ((n + n));
     const size_t num_to_write = num_params__ + num_transformed +
       num_gen_quantities;
     vars = std::vector<double>(num_to_write,

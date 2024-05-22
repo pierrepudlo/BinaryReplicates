@@ -32,6 +32,7 @@
 #'
 #' @rdname bayesian_computations
 #' @importFrom stats quantile
+#' @importFrom rstan extract
 #' @export
 credint <- function(fit, level = .9) {
   # Extract the fixed parameters

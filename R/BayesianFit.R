@@ -2,6 +2,7 @@
 
 #' Fit the Bayesian model for Binary Replicates
 #'
+#' @importFrom rstan sampling
 #' @export
 #' @param ni Numeric vector of \eqn{n_i}'s, the total numbers of replicates for each individual
 #' @param si Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual
