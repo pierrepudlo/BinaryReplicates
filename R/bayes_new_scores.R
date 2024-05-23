@@ -38,7 +38,9 @@ predict_scores <- function(fit, newdata_ni, newdata_si) {
   )
   newdata$Y_B <- likelihood_scoring(newdata$ni, newdata$si, newdata$theta,
                                     newdata$p, newdata$q)
-  out <- dplyr::summarise(dplyr::group_by(newdata, `id`, `ni`, `si`), Y_B = mean(`Y_B`))
+  out <- dplyr::summarise(dplyr::group_by(newdata, newdata$id,
+                                          newdata$ni, newdata$si),
+                          Y_B = mean(newdata$Y_B))
   out <- dplyr::ungroup(out)
 
   return(out$Y_B)
