@@ -4,14 +4,14 @@
 \alias{predict_scores}
 \title{Compute predictive Bayesian scores}
 \usage{
-predict_scores(fit, newdata_ni, newdata_si)
+predict_scores(newdata_ni, newdata_si, fit)
 }
 \arguments{
-\item{fit}{The \code{stanfit} object return by \link{BayesianFit}}
-
 \item{newdata_ni}{Numeric vector of the total numbers of replicates per individuals}
 
 \item{newdata_si}{Numeric vector of the numbers of positive replicates per individuals}
+
+\item{fit}{The \code{stanfit} object return by \link{BayesianFit}}
 }
 \value{
 The \code{predict_scores} function returns the predictive Bayesian scores in a numeric vector.
@@ -27,6 +27,6 @@ theta <- mean(periodontal$ti)
 fit <- BayesianFit(periodontal$ni, periodontal$si, chains = 2, iter = 5000)
 credint(fit)
 newdata <- data.frame(ni = rep(4, 5), si = 0:4)
-newdata$Y_BP <- predict_scores(fit, newdata$ni, newdata$si)
+newdata$Y_BP <- predict_scores(newdata$ni, newdata$si, fit)
 newdata
 }
