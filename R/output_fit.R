@@ -3,6 +3,8 @@
 #'
 #' @name bayesian_computations
 #' @title Bayesian computations
+#' @param ni Numeric vector of \eqn{n_i}'s, the total numbers of replicates for each individual
+#' @param si Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual
 #' @param fit The `stanfit` object return by [BayesianFit]
 #' @param level Posterior probability of the credible intervals
 #' @details See [BayesianFit] for details on the Bayesian model.
@@ -24,7 +26,7 @@
 #' theta <- mean(periodontal$ti)
 #' fit <- BayesianFit(periodontal$ni, periodontal$si, chains = 2, iter = 5000)
 #' credint(fit)
-#' Y_B <- bayesian_scoring(fit)
+#' Y_B <- bayesian_scoring(periodontal$ni, periodontal$si, fit)
 #' T_B <- classify_with_scores(Y_B, .4, .6)
 #' theta_B <- bayesian_prevalence_estimate(fit)
 #' cat("The Bayesian prevalence estimate is ", theta_B, "\n")
@@ -49,13 +51,26 @@ credint <- function(fit, level = .9) {
 
 
 #' @rdname bayesian_computations
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarise
+#' @importFrom dplyr left_join
+#' @importFrom dplyr pull
+#' @importFrom magrittr %>%
 #' @export
-bayesian_scoring <- function(fit){
+bayesian_scoring <- function(ni, si, fit){
   # Extract the latent variable
-  Ti <- rstan::extract(fit, pars = "Ti")$Ti
+  pi <- rstan::extract(fit, pars = "pi")$pi
   # Compute the posterior probability
-  out <- colMeans(Ti)
-  return(out)
+  yi <- colMeans(pi)
+  # Pairs (ni, si) that are equal should have the same posterior probability
+  # We need to average the Monte Carlo estimates with a group_by
+  results <- data.frame(ni = ni, si = si, yi = yi) %>%
+    dplyr::group_by(ni, si) %>%
+    dplyr::summarise(yi = mean(yi), .groups="keep")
+  yi2 <- data.frame(ni = ni, si = si) %>%
+    dplyr::left_join(results, by = c("ni", "si")) %>%
+    dplyr::pull(yi)
+  return(yi2)
 }
 
 #' @rdname bayesian_computations

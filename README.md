@@ -97,7 +97,7 @@ credint(fit, level = .8)
 The Bayesian scores, classifications and prevalence estimate can be obtained with
 
 ```{r}
-Y_B <- bayesian_scoring(fit) # scorings
+Y_B <- bayesian_scoring(ni, si, fit) # scorings
 T_B <- classify_with_scores(Y_B, vL = .4, vU = .6) # classifications
 theta_B <- bayesian_prevalence_estimate(fit) # prevalence estimate
 ```

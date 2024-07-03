@@ -9,7 +9,7 @@
 \usage{
 credint(fit, level = 0.9)
 
-bayesian_scoring(fit)
+bayesian_scoring(ni, si, fit)
 
 bayesian_prevalence_estimate(fit)
 }
@@ -17,6 +17,10 @@ bayesian_prevalence_estimate(fit)
 \item{fit}{The \code{stanfit} object return by \link{BayesianFit}}
 
 \item{level}{Posterior probability of the credible intervals}
+
+\item{ni}{Numeric vector of \eqn{n_i}'s, the total numbers of replicates for each individual}
+
+\item{si}{Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual}
 }
 \value{
 The \code{credint} function returns the credible interval bounds for the fixed
@@ -41,7 +45,7 @@ data("periodontal")
 theta <- mean(periodontal$ti)
 fit <- BayesianFit(periodontal$ni, periodontal$si, chains = 2, iter = 5000)
 credint(fit)
-Y_B <- bayesian_scoring(fit)
+Y_B <- bayesian_scoring(periodontal$ni, periodontal$si, fit)
 T_B <- classify_with_scores(Y_B, .4, .6)
 theta_B <- bayesian_prevalence_estimate(fit)
 cat("The Bayesian prevalence estimate is ", theta_B, "\n")
