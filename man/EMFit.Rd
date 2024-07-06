@@ -4,22 +4,30 @@
 \alias{EMFit}
 \title{Compute the maximum likelihood estimate with the EM algorithm}
 \usage{
-EMFit(ni, si, ti = NULL, maxIter = 1000, errorMin = 1e-07)
+EMFit(si, ni, ti = NULL, NN = 20, maxIter = 1000, errorMin = 1e-07)
 }
 \arguments{
-\item{ni}{Numeric vector of \eqn{n_i}'s, the total numbers of replicates for each individual}
-
 \item{si}{Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual}
 
-\item{ti}{Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual.
+\item{ni}{Numeric vector of \eqn{n_i}'s, the total numbers of replicates for each individual}
+
+\item{ti}{Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual
 If \code{NULL}, the EM algorithm is used to estimate the parameters. Default to \code{NULL}. See details}
+
+\item{NN}{The number of Monte Carlo samples if \code{ti} is not provided. Default to 20}
 
 \item{maxIter}{The maximum number of iterations if EM algorithm is used. Default to 1e3}
 
 \item{errorMin}{The minimum error computed if EM algorithm is used. Default to 1e-7}
 }
 \value{
-A list
+A list with the following components:
+\itemize{
+\item{ti_est}{The estimated values of \eqn{t_i}}
+\item{ti_clas}{The estimated values of \eqn{t_i} classified as 0 or 1}
+\item{parameters_hat}{The estimated values of the parameters \eqn{\theta}, \eqn{p} and \eqn{q}}
+\item{MC}{If \code{ti} is not provided, a matrix with the estimated values of the parameters and the Monte Carlo mean and error}
+}
 }
 \description{
 Compute the maximum likelihood estimate with the EM algorithm
@@ -27,9 +35,9 @@ Compute the maximum likelihood estimate with the EM algorithm
 \details{
 This function chooses its algorithm according to what is provided in the \code{ti} argument:
 \itemize{
-\item{"\code{ti} is fully provided"}{the function computes the maximum likelihood
+\item{\code{ti} is fully provided}{the function computes the maximum likelihood
 estimate, with an explicit formula.}
-\item{"\code{ti} is not provided"}{the function uses the EM algorithm
+\item{\code{ti} is not provided}{the function uses the EM algorithm
 to estimate the parameters.}
 \item{\code{ti} is partially provided}{the function uses the EM algorithm to
 estimate the parameters.}
@@ -37,15 +45,7 @@ estimate the parameters.}
 }
 \examples{
 data("periodontal")
-Y_A <- average_scoring(periodontal$ni, periodontal$si)
-Y_M <- median_scoring(periodontal$ni, periodontal$si)
-# In order to compute the likelihood-based scores, we need to know theta,
-# p and q which can be estimated in this example as follows:
-theta_hat <- mean(periodontal$ti)
-cat("The prevalence in the data is ", theta_hat, "\n")
-p_hat <- with(periodontal, sum(si[ti==0])/sum(ni[ti==0]))
-q_hat <- with(periodontal, 1 - sum(si[ti==1])/sum(ni[ti==1]))
-Y_L <- likelihood_scoring(periodontal$ni, periodontal$si,
-                          theta_hat, p_hat, q_hat)
+periodontal_ml <- EMFit(periodontal$si,periodontal$ni,periodontal$ti)
+periodontal_EM <- EMFit(periodontal$si,periodontal$ni,ti = NULL)
 
 }

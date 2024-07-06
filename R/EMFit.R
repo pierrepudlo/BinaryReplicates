@@ -18,9 +18,9 @@
 #' @details
 #' This function chooses its algorithm according to what is provided in the \code{ti} argument:
 #' \itemize{
-#'  \item{"\code{ti} is fully provided"}{the function computes the maximum likelihood
+#'  \item{\code{ti} is fully provided}{the function computes the maximum likelihood
 #'  estimate, with an explicit formula.}
-#'  \item{"\code{ti} is not provided"}{the function uses the EM algorithm
+#'  \item{\code{ti} is not provided}{the function uses the EM algorithm
 #'  to estimate the parameters.}
 #'  \item{\code{ti} is partially provided}{the function uses the EM algorithm to
 #'  estimate the parameters.}
