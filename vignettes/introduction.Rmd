@@ -94,7 +94,7 @@ synth_data <- synth_data %>%
 
 Note that we have plugged in the true values of the parameters in the likelihood scoring function. In practice, we would use the estimates obtained from other methods, like the Bayesian fit.
 
-## Predicting the latent state
+## Predicting the latent states
 
 The latent state of an individual is either $0$ or $1$. But since binary replicates are noisy measurements, we allow three different values for the prediction:
 
