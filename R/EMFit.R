@@ -93,18 +93,15 @@ EMFit <- function(si,ni,ti=NULL,NN=20,maxIter=1e3,errorMin=1e-7){
         q_hat_0 <- q_hat
         theta_hat <- mean(ti_est)
         id_left <- ti_est<1/2
-        # if(length(id_left) != 0){
         p_hat <- mean(si[id_left])/mean(ni[id_left])
-        # } else {
-        if(is.na(p_hat)) p_hat <- runif(1,0,1/2)
-        # }
+        if(is.na(p_hat))
+        {
+          cat("p_hat NA")
+          p_hat <- runif(1,0,1/2)
+        }
         id_right <- ti_est>=1/2
-        # if(length(id_right) != 0){
         q_hat <- mean((ni-si)[id_right])/mean(ni[id_right])
-        # } else {
         if(is.na(q_hat))q_hat <- runif(1,0,1/2)
-        # }
-        if(is.na(p_hat)) browser()
         if(p_hat>1/2 & q_hat>1/2){
           p_hat <- 1-p_hat
           q_hat <- 1-q_hat
