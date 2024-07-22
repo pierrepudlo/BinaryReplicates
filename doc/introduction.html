@@ -439,25 +439,31 @@ distribution. With the default prior, this is done as follows:</p>
 <span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; post-warmup draws per chain=2500, total post-warmup draws=10000.</span></span>
 <span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt;       mean se_mean   sd 2.5%  25%  50%  75% 97.5% n_eff Rhat</span></span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; theta 0.49       0 0.13 0.24 0.40 0.49 0.58  0.74  3912    1</span></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; p     0.22       0 0.07 0.10 0.18 0.22 0.27  0.37  3868    1</span></span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; q     0.25       0 0.08 0.10 0.20 0.25 0.30  0.40  4196    1</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; theta 0.28       0 0.13 0.07 0.18 0.26 0.36  0.58  3569    1</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; p     0.25       0 0.05 0.15 0.22 0.25 0.29  0.35  3888    1</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; q     0.26       0 0.10 0.06 0.18 0.26 0.33  0.46  4091    1</span></span>
 <span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Mon Jul 22 11:18:19 2024.</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Mon Jul 22 11:23:39 2024.</span></span>
 <span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span></span>
 <span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span></span>
 <span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; convergence, Rhat=1).</span></span></code></pre></div>
 <p>introduction.R</p>
+<p>We can also get the maximum likelihood estimates of the
+parameters:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>mle <span class="ot">&lt;-</span> <span class="fu">EMFit</span>(ni, si)</span></code></pre></div>
+<p>introduction.R</p>
 <p>We can now add the scores to the dataset:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>synth_data <span class="ot">&lt;-</span> synth_data <span class="sc">%&gt;%</span> </span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Y_A =</span> <span class="fu">average_scoring</span>(ni, si),</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>         <span class="at">Y_M =</span> <span class="fu">median_scoring</span>(ni, si),</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>         <span class="at">Y_L =</span> <span class="fu">likelihood_scoring</span>(ni, si, theta, p, q),</span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>         <span class="at">Y_B =</span> <span class="fu">bayesian_scoring</span>(ni, si, fit))</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>synth_data <span class="ot">&lt;-</span> synth_data <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Y_A =</span> <span class="fu">average_scoring</span>(ni, si),</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>         <span class="at">Y_M =</span> <span class="fu">median_scoring</span>(ni, si),</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>         <span class="at">Y_L =</span> <span class="fu">likelihood_scoring</span>(ni, si, theta, p, q),</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>         <span class="at">Y_E =</span> <span class="fu">likelihood_scoring</span>(ni, si, mle[<span class="st">&#39;theta&#39;</span>], mle[<span class="st">&#39;p&#39;</span>], mle[<span class="st">&#39;q&#39;</span>]),</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>         <span class="at">Y_B =</span> <span class="fu">bayesian_scoring</span>(ni, si, fit))</span></code></pre></div>
 <p>introduction.R</p>
 <p>Note that we have plugged in the true values of the parameters in the
-likelihood scoring function. In practice, we would use the estimates
-obtained from other methods, like the Bayesian fit.</p>
+likelihood-base scoring function. The EM scores <code>Y_E</code> replace
+the true values of the fixed parameters with their maximum estimates. In
+practice, the likelihood-based scores are not available.</p>
 </div>
 <div id="predicting-the-latent-states" class="section level2">
 <h2>Predicting the latent states</h2>
@@ -474,68 +480,96 @@ that appeals for more data to conclude.</li>
 </ul>
 <p>We can compute the predictions for the synthetic dataset as
 follows:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>v_L <span class="ot">&lt;-</span> .<span class="dv">35</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>v_U <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> v_L</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>synth_data <span class="ot">&lt;-</span> synth_data <span class="sc">%&gt;%</span> </span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">T_A =</span> <span class="fu">classify_with_scores</span>(Y_A, v_L, v_U),</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>         <span class="at">T_M =</span> <span class="fu">classify_with_scores</span>(Y_M, v_L, v_U),</span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>         <span class="at">T_L =</span> <span class="fu">classify_with_scores</span>(Y_L, v_L, v_U),</span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>         <span class="at">T_B =</span> <span class="fu">classify_with_scores</span>(Y_B, v_L, v_U))</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>v_L <span class="ot">&lt;-</span> .<span class="dv">35</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>v_U <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> v_L</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>synth_data <span class="ot">&lt;-</span> synth_data <span class="sc">%&gt;%</span> </span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">T_A =</span> <span class="fu">classify_with_scores</span>(Y_A, v_L, v_U),</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>         <span class="at">T_M =</span> <span class="fu">classify_with_scores</span>(Y_M, v_L, v_U),</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>         <span class="at">T_L =</span> <span class="fu">classify_with_scores</span>(Y_L, v_L, v_U),</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>         <span class="at">T_E =</span> <span class="fu">classify_with_scores</span>(Y_E, v_L, v_U),</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>         <span class="at">T_B =</span> <span class="fu">classify_with_scores</span>(Y_B, v_L, v_U))</span></code></pre></div>
 <p>introduction.R</p>
 <p>We can now count how many times we decide in favor of <span class="math inline">\(0\)</span>, <span class="math inline">\(1\)</span>
 or <span class="math inline">\(1/2\)</span> (inconclusive) given the
 true state and the method to score the individuals as follows:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>confusion <span class="ot">&lt;-</span> synth_data <span class="sc">%&gt;%</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">Status =</span> <span class="fu">ifelse</span>(ti<span class="sc">==</span><span class="dv">1</span>, <span class="st">&quot;T=1&quot;</span>, <span class="st">&quot;T=0&quot;</span>),</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="at">Averge =</span> T_A, <span class="at">Median =</span> T_M, <span class="at">Likelihood =</span> T_L, <span class="at">Bayesian =</span> T_B) <span class="sc">%&gt;%</span></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(Averge, Median, Likelihood, Bayesian), </span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;Method&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;Decision&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="fu">group_by</span>(Status, Method, Decision) <span class="sc">%&gt;%</span></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;keep&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">count =</span> <span class="fu">as.integer</span>(count)) <span class="sc">%&gt;%</span></span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Decision, <span class="at">values_from =</span> count, <span class="at">values_fill =</span> <span class="dv">0</span>) </span>
-<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>confusion</span>
-<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; # A tibble: 8 × 5</span></span>
-<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt;   Status Method       `0` `0.5`   `1`</span></span>
-<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;  &lt;chr&gt;      &lt;int&gt; &lt;int&gt; &lt;int&gt;</span></span>
-<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt; 1 T=0    Averge        22     8     2</span></span>
-<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt; 2 T=0    Bayesian      22     7     3</span></span>
-<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#&gt; 3 T=0    Likelihood    22     7     3</span></span>
-<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co">#&gt; 4 T=0    Median        22     7     3</span></span>
-<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co">#&gt; 5 T=1    Averge         0     2    16</span></span>
-<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co">#&gt; 6 T=1    Bayesian       1     0    17</span></span>
-<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co">#&gt; 7 T=1    Likelihood     1     0    17</span></span>
-<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="co">#&gt; 8 T=1    Median         1     0    17</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>confusion <span class="ot">&lt;-</span> synth_data <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="at">Status =</span> <span class="fu">ifelse</span>(ti<span class="sc">==</span><span class="dv">1</span>, <span class="st">&quot;T=1&quot;</span>, <span class="st">&quot;T=0&quot;</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">Averge =</span> T_A, <span class="at">Median =</span> T_M, <span class="at">Likelihood =</span> T_L, <span class="at">EM =</span> T_E, <span class="at">Bayesian =</span> T_B) <span class="sc">%&gt;%</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(Averge, Median, Likelihood, EM, Bayesian), </span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;Method&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;Decision&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  <span class="fu">group_by</span>(Status, Method, Decision) <span class="sc">%&gt;%</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">&quot;keep&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">count =</span> <span class="fu">as.integer</span>(count)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Decision, <span class="at">values_from =</span> count, <span class="at">values_fill =</span> <span class="dv">0</span>) </span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>confusion</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; # A tibble: 10 × 5</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt;    Status Method       `0` `0.5`   `1`</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;  &lt;chr&gt;      &lt;int&gt; &lt;int&gt; &lt;int&gt;</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt;  1 T=0    Averge        23     8     4</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt;  2 T=0    Bayesian      30     2     3</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co">#&gt;  3 T=0    EM            30     2     3</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co">#&gt;  4 T=0    Likelihood    28     2     5</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="co">#&gt;  5 T=0    Median        28     2     5</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="co">#&gt;  6 T=1    Averge         2     4     9</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="co">#&gt;  7 T=1    Bayesian       5     4     6</span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="co">#&gt;  8 T=1    EM             5     4     6</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="co">#&gt;  9 T=1    Likelihood     2     3    10</span></span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a><span class="co">#&gt; 10 T=1    Median         2     3    10</span></span></code></pre></div>
 <p>introduction.R</p>
 </div>
 <div id="predicting-scores-on-new-data-and-classify-them" class="section level2">
 <h2>Predicting scores on new data and classify them</h2>
-<p>Based on the Bayesian fitting, we can also compute the Bayesian
-scores and the predictions on new data. Let us say we are interrested in
-predicting the scores and the latent state of individuals with <span class="math inline">\(n_i = 8\)</span> replicates and <span class="math inline">\(s_i \in \{0, 1, 2, 3, 4, 5, 6, 7, 8\}\)</span>.
-The new data are thus:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>new_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ni =</span> <span class="fu">rep</span>(<span class="dv">8</span>, <span class="dv">9</span>), <span class="at">si =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">8</span>)</span></code></pre></div>
+<p>Let us say we are interrested in predicting the scores and the latent
+state of individuals with <span class="math inline">\(n_i = 8\)</span>
+replicates and <span class="math inline">\(s_i \in \{0, 1, 2, 3, 4, 5,
+6, 7, 8\}\)</span>. The new data are thus:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>new_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ni =</span> <span class="fu">rep</span>(<span class="dv">8</span>, <span class="dv">9</span>), <span class="at">si =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">8</span>)</span></code></pre></div>
 <p>introduction.R</p>
-<p>The scores and the predictions can be computed as follows:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>new_data <span class="ot">&lt;-</span> new_data <span class="sc">%&gt;%</span> </span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Y_B =</span> <span class="fu">predict_scores</span>(ni, si, fit),</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>         <span class="at">T_B =</span> <span class="fu">classify_with_scores</span>(Y_B, v_L, v_U))</span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>new_data</span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt;   ni si         Y_B T_B</span></span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; 1  8  0 0.001056828 0.0</span></span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; 2  8  1 0.006747601 0.0</span></span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; 3  8  2 0.045135972 0.0</span></span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; 4  8  3 0.213009366 0.0</span></span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co">#&gt; 5  8  4 0.549793089 0.5</span></span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co">#&gt; 6  8  5 0.843224587 1.0</span></span>
-<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co">#&gt; 7  8  6 0.966987093 1.0</span></span>
-<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt; 8  8  7 0.995365411 1.0</span></span>
-<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co">#&gt; 9  8  8 0.999283495 1.0</span></span></code></pre></div>
+<div id="the-bayesian-way" class="section level3">
+<h3>The Bayesian way</h3>
+<p>Based on the Bayesian fitting, we can also compute the Bayesian
+scores and the predictions on new data. The scores and the predictions
+can be computed as follows:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>new_data <span class="ot">&lt;-</span> new_data <span class="sc">%&gt;%</span> </span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Y_B =</span> <span class="fu">predict_scores</span>(ni, si, fit),</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>         <span class="at">T_B =</span> <span class="fu">classify_with_scores</span>(Y_B, v_L, v_U))</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="fu">round</span>(new_data, <span class="at">digits =</span> <span class="dv">4</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt;   ni si    Y_B T_B</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; 1  8  0 0.0013 0.0</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; 2  8  1 0.0064 0.0</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; 3  8  2 0.0310 0.0</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; 4  8  3 0.1203 0.0</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; 5  8  4 0.3346 0.0</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; 6  8  5 0.6433 0.5</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; 7  8  6 0.8934 1.0</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt; 8  8  7 0.9840 1.0</span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt; 9  8  8 0.9974 1.0</span></span></code></pre></div>
 <p>introduction.R</p>
 <p>In the above situation, the predictions are conclusive for all the
 individuals except the one where we observed as many <span class="math inline">\(0\)</span>’s as <span class="math inline">\(1\)</span>’s in the replicates.</p>
+</div>
+<div id="the-frequentist-way" class="section level3">
+<h3>The frequentist way</h3>
+<p>We can also compute the EM-bases scores and the predictions based on
+the maximum likelihood estimates as follows:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>new_data <span class="ot">&lt;-</span> new_data <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Y_E =</span> <span class="fu">likelihood_scoring</span>(ni, si, mle[<span class="st">&#39;theta&#39;</span>], mle[<span class="st">&#39;p&#39;</span>], mle[<span class="st">&#39;q&#39;</span>]),</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>         <span class="at">T_E =</span> <span class="fu">classify_with_scores</span>(Y_E, v_L, v_U))</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="fu">round</span>(new_data, <span class="at">digits =</span> <span class="dv">4</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt;   ni si    Y_B T_B    Y_E T_E</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt; 1  8  0 0.0013 0.0 0.0000   0</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; 2  8  1 0.0064 0.0 0.0001   0</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt; 3  8  2 0.0310 0.0 0.0015   0</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt; 4  8  3 0.1203 0.0 0.0215   0</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co">#&gt; 5  8  4 0.3346 0.0 0.2391   0</span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co">#&gt; 6  8  5 0.6433 0.5 0.8178   1</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co">#&gt; 7  8  6 0.8934 1.0 0.9846   1</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co">#&gt; 8  8  7 0.9840 1.0 0.9989   1</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt; 9  8  8 0.9974 1.0 0.9999   1</span></span></code></pre></div>
+<p>introduction.R</p>
+</div>
 </div>
 </div>
 
