@@ -58,5 +58,4 @@ src/*.so
 # Other stuff
 .DS_Store
 inst/doc
-/doc/
 /Meta/
