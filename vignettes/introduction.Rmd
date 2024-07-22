@@ -86,6 +86,7 @@ print(fit, pars = c("theta", "p", "q"))
 We can also get the maximum likelihood estimates of the parameters:
 ```{r}
 mle <- EMFit(ni, si)
+mle
 ```
 
 
