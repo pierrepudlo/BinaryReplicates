@@ -14,7 +14,7 @@ EMFit(si, ni, ti = NULL, NN = 20, maxIter = 1000, errorMin = 1e-07)
 \item{ti}{Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual
 If \code{NULL}, the EM algorithm is used to estimate the parameters. Default to \code{NULL}. See details}
 
-\item{NN}{The number of Monte Carlo samples if \code{ti} is not provided. Default to 20}
+\item{NN}{The number of runs of the EM algorithm if \code{ti} is not provided. Default to 20}
 
 \item{maxIter}{The maximum number of iterations if EM algorithm is used. Default to 1e3}
 
