@@ -9,6 +9,7 @@
 #' @param N_init The number of initializations if \code{ti} is not provided. Default to 20
 #' @param maxIter The maximum number of iterations if EM algorithm is used. Default to 1e3
 #' @param errorMin The minimum error computed if EM algorithm is used. Default to 1e-7
+#' @param correction Whether or not we want to correct the ML to avoid going to 0. Default to TRUE
 #' @return A list with the following components:
 #' \itemize{
 #' \item{score}{ The estimated values of the scores}
@@ -35,7 +36,9 @@
 #'@seealso [classify_with_scores]
 #'
 #' @export
-EMFit <- function(si,ni,ti=NULL,vL=0.5,vU=0.5,N_init=20,maxIter=1e3,errorMin=1e-7){
+EMFit <- function(si,ni,ti=NULL,vL=0.5,vU=0.5,
+                  N_init=20,maxIter=1e3,errorMin=1e-7,
+                  correction=TRUE){
   ### Inner functions
   getLikelihood_MC <- function(ni,si,ti,p,q,theta,N=20){
     n <- length(ti)
@@ -63,7 +66,7 @@ EMFit <- function(si,ni,ti=NULL,vL=0.5,vU=0.5,N_init=20,maxIter=1e3,errorMin=1e-
   }
 
   # Fit the model
-  emBin <- function(si,ni,ti=NULL,maxIter=1e3,errorMin=1e-7){
+  emBin <- function(si,ni,ti=NULL,maxIter=1e3,errorMin=1e-7, correction=correction){
     n <- length(si)
     if(!is.null(ti) & !any(is.na(ti))){
       theta_hat <- mean(ti)
@@ -84,10 +87,18 @@ EMFit <- function(si,ni,ti=NULL,vL=0.5,vU=0.5,N_init=20,maxIter=1e3,errorMin=1e-
       iter <- 1
       error= 2*errorMin
       theta_hat <- mean(score)
-      # p_hat <- mean(si[score<1/2])/mean(ni[score<1/2])
-      p_hat <- mean(si*(1-score))/mean(ni*(1-score))
-      # q_hat <- mean((ni-si)[score>=1/2])/mean(ni[score>=1/2])
-      q_hat <- mean((ni-si)*score)/mean(ni*score)
+      if (correction){
+        # p_hat <- sum(si[score<1/2])/sum(ni[score<1/2])
+        p_hat <- (sum(si*(1-score)) + 1)/(sum(ni*(1-score)) + 2)
+        # q_hat <- sum((ni-si)[score>=1/2])/sum(ni[score>=1/2])
+        q_hat <- (sum((ni-si)*score) + 1)/(sum(ni*score) + 2)
+
+      } else {
+        # p_hat <- sum(si[score<1/2])/sum(ni[score<1/2])
+        p_hat <- sum(si*(1-score))/sum(ni*(1-score))
+        # q_hat <- sum((ni-si)[score>=1/2])/sum(ni[score>=1/2])
+        q_hat <- sum((ni-si)*score)/sum(ni*score)
+      }
       ps <- p_hat
       while(error>errorMin & iter<maxIter){
         ## Estimation
@@ -103,8 +114,13 @@ EMFit <- function(si,ni,ti=NULL,vL=0.5,vU=0.5,N_init=20,maxIter=1e3,errorMin=1e-
         q_hat_0 <- q_hat
         theta_hat <- mean(score)
         # id_left <- score<1/2
-        # p_hat <- mean(si[id_left])/mean(ni[id_left])
-        p_hat <- mean(si*(1-score))/mean(ni*(1-score))
+        # p_hat <- sum(si[id_left])/sum(ni[id_left])
+        if (correction) {
+          p_hat <- (sum(si*(1-score)) + 1)/(sum(ni*(1-score)) + 2)
+
+        } else {
+          p_hat <- sum(si*(1-score))/sum(ni*(1-score))
+        }
         ps <- c(ps,p_hat)
         if(is.na(p_hat))
         {
@@ -112,8 +128,12 @@ EMFit <- function(si,ni,ti=NULL,vL=0.5,vU=0.5,N_init=20,maxIter=1e3,errorMin=1e-
           p_hat <- runif(1,0,1/2)
         }
         # id_right <- score>=1/2
-        # q_hat <- mean((ni-si)[id_right])/mean(ni[id_right])
-        q_hat <- mean((ni-si)*score)/mean(ni*score)
+        # q_hat <- sum((ni-si)[id_right])/sum(ni[id_right])
+        if (correction) {
+          q_hat <- (sum((ni-si)*score) + 1)/(sum(ni*score) + 2)
+        } else {
+          q_hat <- sum((ni-si)*score)/sum(ni*score)
+        }
         if(is.na(q_hat))q_hat <- runif(1,0,1/2)
         if(p_hat>1/2 & q_hat>1/2){
           p_hat <- 1-p_hat
