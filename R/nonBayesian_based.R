@@ -16,14 +16,14 @@
 #' data("periodontal")
 #' Y_A <- average_scoring(periodontal$ni, periodontal$si)
 #' Y_M <- median_scoring(periodontal$ni, periodontal$si)
-#' # In order to compute the likelihood-based scores, we need to know theta,
-#' # p and q which can be estimated in this example as follows:
+#' In order to compute the likelihood-based scores, we need to know theta,
+#' p and q which can be estimated in this example as follows:
 #' theta_hat <- mean(periodontal$ti)
 #' cat("The prevalence in the data is ", theta_hat, "\n")
 #' p_hat <- with(periodontal, sum(si[ti==0])/sum(ni[ti==0]))
 #' q_hat <- with(periodontal, 1 - sum(si[ti==1])/sum(ni[ti==1]))
 #' Y_L <- likelihood_scoring(periodontal$ni, periodontal$si,
-#'                           theta_hat, p_hat, q_hat)
+#'                           list(theta=theta_hat, p=p_hat, q=q_hat))
 #'
 #' @name non_bayesian_scoring
 #'
@@ -43,7 +43,10 @@ median_scoring <- function(ni, si) {
 #' @rdname non_bayesian_scoring
 #' @importFrom stats dbinom
 #' @export
-likelihood_scoring <- function(ni, si, theta, p, q) {
+likelihood_scoring <- function(ni, si, param) {
+  theta <- param$theta
+  p <- param$p
+  q <- param$q
   theta*dbinom(si, ni, 1-q) /
     (theta*dbinom(si, ni, 1-q) + (1-theta)*dbinom(si, ni, p))
 }
@@ -55,6 +58,17 @@ likelihood_scoring <- function(ni, si, theta, p, q) {
 #' @param vL The lower threshold
 #' @param vU The upper threshold
 #' @return A numeric vector of the classification (where .5 = inconclusive)
+#'
+#' @details Each decision \eqn{\hat{t}_i} is taken according to the following rule:
+#' \deqn{
+#'         \hat{t}_i = \begin{cases}
+#'          0 & \text{if } y_i < v_L,\\
+#'          1/2 & \text{if } v_L \leq y_i \leq v_U,\\
+#'          1 & \text{if } y_i > v_U,
+#'          \end{cases}
+#' }
+#' where \eqn{y_i} is the score for individual \eqn{i}.
+#'
 #' @export
 classify_with_scores <- function(scores, vL, vU) {
   ifelse(scores < vL, 0, ifelse(scores > vU, 1, .5))

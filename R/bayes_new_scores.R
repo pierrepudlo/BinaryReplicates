@@ -5,7 +5,7 @@
 #' @param fit The `stanfit` object return by [BayesianFit]
 #'
 #' @importFrom rstan extract
-#' @importFrom dplyr summarise group_by ungroup
+#' @importFrom dplyr summarise group_by ungroup mutate
 #' @importFrom magrittr %>%
 #' @return
 #' The `predict_scores` function returns the predictive Bayesian scores in a numeric vector.
@@ -20,6 +20,12 @@
 #' newdata <- data.frame(ni = rep(4, 5), si = 0:4)
 #' newdata$Y_BP <- predict_scores(newdata$ni, newdata$si, fit)
 #' newdata
+#'
+#' ## EM comparaison
+#' fitEM <- EMFit(periodontal$si,periodontal$ni)
+#' newdata$Y_EM <- likelihood_scoring(
+#'   newdata$ni, newdata$si,
+#'   fitEM$parameters_hat$theta, fitEM$parameters_hat$p, fitEM$parameters_hat$q)
 predict_scores <- function(newdata_ni, newdata_si, fit) {
   if (length(newdata_ni) != length(newdata_si)) {
     stop("newdata_ni and newdata_ni must have the same length")
@@ -37,7 +43,7 @@ predict_scores <- function(newdata_ni, newdata_si, fit) {
     p = rep(post$p, times = n),
     q = rep(post$q, times = n)
   ) %>%
-    mutate(Y_B = likelihood_scoring(ni, si, theta, p, q))
+    mutate(Y_B = likelihood_scoring(ni, si, list(theta=theta, p=p, q=q)))
   out <- newdata %>%
     group_by(id) %>%
     summarise(Y_B = mean(Y_B), .groups="keep")

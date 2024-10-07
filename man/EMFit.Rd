@@ -4,7 +4,16 @@
 \alias{EMFit}
 \title{Compute the maximum likelihood estimate with the EM algorithm}
 \usage{
-EMFit(si, ni, ti = NULL, NN = 20, maxIter = 1000, errorMin = 1e-07)
+EMFit(
+  si,
+  ni,
+  ti = NULL,
+  vL = 0.5,
+  vU = 0.5,
+  N_init = 20,
+  maxIter = 1000,
+  errorMin = 1e-07
+)
 }
 \arguments{
 \item{si}{Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual}
@@ -14,7 +23,11 @@ EMFit(si, ni, ti = NULL, NN = 20, maxIter = 1000, errorMin = 1e-07)
 \item{ti}{Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual
 If \code{NULL}, the EM algorithm is used to estimate the parameters. Default to \code{NULL}. See details}
 
-\item{NN}{The number of Monte Carlo samples if \code{ti} is not provided. Default to 20}
+\item{vL}{Numeric, the lower bound for the classification of the scores. Default to 0.5}
+
+\item{vU}{Numeric, the upper bound for the classification of the scores. Default to 0.5}
+
+\item{N_init}{The number of initializations if \code{ti} is not provided. Default to 20}
 
 \item{maxIter}{The maximum number of iterations if EM algorithm is used. Default to 1e3}
 
@@ -23,10 +36,8 @@ If \code{NULL}, the EM algorithm is used to estimate the parameters. Default to 
 \value{
 A list with the following components:
 \itemize{
-\item{ti_est}{The estimated values of \eqn{t_i}}
-\item{ti_clas}{The estimated values of \eqn{t_i} classified as 0 or 1}
-\item{parameters_hat}{The estimated values of the parameters \eqn{\theta}, \eqn{p} and \eqn{q}}
-\item{MC}{If \code{ti} is not provided, a matrix with the estimated values of the parameters and the Monte Carlo mean and error}
+\item{score}{ The estimated values of the scores}
+\item{parameters_hat}{ The estimated values of the parameters \eqn{\theta}, \eqn{p} and \eqn{q}}
 }
 }
 \description{
@@ -35,11 +46,11 @@ Compute the maximum likelihood estimate with the EM algorithm
 \details{
 This function chooses its algorithm according to what is provided in the \code{ti} argument:
 \itemize{
-\item{\code{ti} is fully provided}{the function computes the maximum likelihood
+\item{\emph{\code{ti} is fully provided}: }{the function computes the maximum likelihood
 estimate, with an explicit formula.}
-\item{\code{ti} is not provided}{the function uses the EM algorithm
+\item{\emph{\code{ti} is not provided}: }{the function uses the EM algorithm
 to estimate the parameters.}
-\item{\code{ti} is partially provided}{the function uses the EM algorithm to
+\item{\emph{\code{ti} is partially provided}: }{the function uses the EM algorithm to
 estimate the parameters.}
 }
 }
@@ -48,4 +59,7 @@ data("periodontal")
 periodontal_ml <- EMFit(periodontal$si,periodontal$ni,periodontal$ti)
 periodontal_EM <- EMFit(periodontal$si,periodontal$ni,ti = NULL)
 
+}
+\seealso{
+\link{classify_with_scores}
 }

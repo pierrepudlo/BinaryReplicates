@@ -88,7 +88,7 @@ We can now add the scores to the dataset:
 synth_data <- synth_data %>% 
   mutate(Y_A = average_scoring(ni, si),
          Y_M = median_scoring(ni, si),
-         Y_L = likelihood_scoring(ni, si, theta, p, q),
+         Y_L = likelihood_scoring(ni, si, list(theta=theta, p=p, q=q)),
          Y_B = bayesian_scoring(ni, si, fit))
 ```
 

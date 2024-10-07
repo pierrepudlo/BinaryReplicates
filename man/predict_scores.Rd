@@ -29,4 +29,10 @@ credint(fit)
 newdata <- data.frame(ni = rep(4, 5), si = 0:4)
 newdata$Y_BP <- predict_scores(newdata$ni, newdata$si, fit)
 newdata
+
+## EM comparaison
+fitEM <- EMFit(periodontal$si,periodontal$ni)
+newdata$Y_EM <- likelihood_scoring(
+  newdata$ni, newdata$si,
+  fitEM$parameters_hat$theta, fitEM$parameters_hat$p, fitEM$parameters_hat$q)
 }

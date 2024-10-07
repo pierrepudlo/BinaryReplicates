@@ -20,3 +20,14 @@ A numeric vector of the classification (where .5 = inconclusive)
 \description{
 Classification based on a thresholding of the scores
 }
+\details{
+Each decision \eqn{\hat{t}_i} is taken according to the following rule:
+\deqn{
+        \hat{t}_i = \begin{cases}
+         0 & \text{if } y_i < v_L,\\
+         1/2 & \text{if } v_L \leq y_i \leq v_U,\\
+         1 & \text{if } y_i > v_U,
+         \end{cases}
+}
+where \eqn{y_i} is the score for individual \eqn{i}.
+}
