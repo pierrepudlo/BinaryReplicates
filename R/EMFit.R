@@ -152,7 +152,7 @@ EMFit <- function(si,ni,ti=NULL,vL=0.5,vU=0.5,
   ### ---------------
 
   if(!is.null(ti) & !any(is.na(ti))){
-    out <- emBin(si,ni,ti)
+    out <- emBin(si,ni,ti,correction=correction)
   } else {
     # result <- matrix(NA,N_init,5)
     result <- matrix(NA,N_init,4)
@@ -160,7 +160,7 @@ EMFit <- function(si,ni,ti=NULL,vL=0.5,vU=0.5,
     colnames(result) <- c("theta","p","q","Likelihood")
     allRes <- list()
     for(i in 1:N_init){
-      allRes[[i]] <- emBin(si,ni)
+      allRes[[i]] <- emBin(si,ni,correction=correction)
       tii <- allRes[[i]]$ti_clas
       parai <- allRes[[i]]$parameters_hat
       # log_likeli <- getLikelihood_MC(ni,si,tii,
