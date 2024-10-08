@@ -66,7 +66,7 @@ EMFit <- function(si,ni,ti=NULL,vL=0.5,vU=0.5,
   }
 
   # Fit the model
-  emBin <- function(si,ni,ti=NULL,maxIter=1e3,errorMin=1e-7, correction=correction){
+  emBin <- function(si,ni,ti=NULL,maxIter=1e3,errorMin=1e-7, correction=TRUE){
     n <- length(si)
     if(!is.null(ti) & !any(is.na(ti))){
       theta_hat <- mean(ti)
@@ -92,7 +92,6 @@ EMFit <- function(si,ni,ti=NULL,vL=0.5,vU=0.5,
         p_hat <- (sum(si*(1-score)) + 1)/(sum(ni*(1-score)) + 2)
         # q_hat <- sum((ni-si)[score>=1/2])/sum(ni[score>=1/2])
         q_hat <- (sum((ni-si)*score) + 1)/(sum(ni*score) + 2)
-
       } else {
         # p_hat <- sum(si[score<1/2])/sum(ni[score<1/2])
         p_hat <- sum(si*(1-score))/sum(ni*(1-score))
@@ -107,7 +106,6 @@ EMFit <- function(si,ni,ti=NULL,vL=0.5,vU=0.5,
         denom_right <- (1-theta_hat)*p_hat^si*(1-p_hat)^(ni-si)
         denom <- numer+denom_right
         score[id_na] <- numer[id_na]/denom[id_na]
-        if(any(is.na(score))) browser()
         ## Maximization
         theta_hat_0 <- theta_hat
         p_hat_0 <- p_hat
@@ -117,7 +115,6 @@ EMFit <- function(si,ni,ti=NULL,vL=0.5,vU=0.5,
         # p_hat <- sum(si[id_left])/sum(ni[id_left])
         if (correction) {
           p_hat <- (sum(si*(1-score)) + 1)/(sum(ni*(1-score)) + 2)
-
         } else {
           p_hat <- sum(si*(1-score))/sum(ni*(1-score))
         }
