@@ -2,7 +2,7 @@
 % Please edit documentation in R/EMFit.R
 \name{EMFit}
 \alias{EMFit}
-\title{Compute the maximum likelihood estimate with the EM algorithm}
+\title{Compute the \emph{Maximum-A-Posteriori} estimate with the EM algorithm}
 \usage{
 EMFit(
   si,
@@ -38,12 +38,12 @@ A list with the following components:
 }
 }
 \description{
-Compute the maximum likelihood estimate with the EM algorithm
+Compute the \emph{Maximum-A-Posteriori} estimate with the EM algorithm
 }
 \details{
 This function chooses its algorithm according to what is provided in the \code{ti} argument:
 \itemize{
-\item{\emph{\code{ti} is fully provided}: }{the function computes the maximum likelihood
+\item{\emph{\code{ti} is fully provided}: }{the function computes the \emph{Maximum-A-Posteriori}
 estimate, with an explicit formula.}
 \item{\emph{\code{ti} is not provided}: }{the function uses the EM algorithm
 to estimate the parameters.}

@@ -1,4 +1,4 @@
-#' Compute the maximum likelihood estimate with the EM algorithm
+#' Compute the *Maximum-A-Posteriori* estimate with the EM algorithm
 #'
 #' @param ni Numeric vector of \eqn{n_i}'s, the total numbers of replicates for each individual
 #' @param si Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual
@@ -17,7 +17,7 @@
 #' @details
 #' This function chooses its algorithm according to what is provided in the \code{ti} argument:
 #' \itemize{
-#'  \item{\emph{\code{ti} is fully provided}: }{the function computes the maximum likelihood
+#'  \item{\emph{\code{ti} is fully provided}: }{the function computes the *Maximum-A-Posteriori*
 #'  estimate, with an explicit formula.}
 #'  \item{\emph{\code{ti} is not provided}: }{the function uses the EM algorithm
 #'  to estimate the parameters.}
@@ -197,7 +197,7 @@ EMFit <- function(si,ni,ti=NULL,
 #' @details
 #' This function chooses its algorithm according to what is provided in the \code{ti} argument:
 #' \itemize{
-#'  \item{\emph{\code{ti} is fully provided}: }{the function computes the maximum likelihood
+#'  \item{\emph{\code{ti} is fully provided}: }{the function computes the *Maximum-A-Posteriori*
 #'  estimate, with an explicit formula.}
 #'  \item{\emph{\code{ti} is not provided}: }{the function uses the EM algorithm
 #'  to estimate the parameters.}

@@ -54,7 +54,7 @@ Function to perform cross-validation in the EM algorithm
 \details{
 This function chooses its algorithm according to what is provided in the \code{ti} argument:
 \itemize{
-\item{\emph{\code{ti} is fully provided}: }{the function computes the maximum likelihood
+\item{\emph{\code{ti} is fully provided}: }{the function computes the \emph{Maximum-A-Posteriori}
 estimate, with an explicit formula.}
 \item{\emph{\code{ti} is not provided}: }{the function uses the EM algorithm
 to estimate the parameters.}
