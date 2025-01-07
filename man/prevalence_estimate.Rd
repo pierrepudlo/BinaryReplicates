@@ -2,19 +2,19 @@
 % Please edit documentation in R/nonBayesian_based.R
 \name{prevalence_estimate}
 \alias{prevalence_estimate}
-\title{Compute the average- and median-based prevalence estimates based on the scores}
+\title{Compute the average-/median- or MAP-based prevalence estimates based on the scores}
 \usage{
 prevalence_estimate(scores)
 }
 \arguments{
 \item{scores}{Numeric vector of the scores, computed with
-\link{average_scoring} or \link{median_scoring}}
+\link{average_scoring}, \link{median_scoring} or \link{MAP_scoring}}
 }
 \value{
 A numeric value of the prevalence estimate
 }
 \description{
-Compute the average- and median-based prevalence estimates based on the scores
+Compute the average-/median- or MAP-based prevalence estimates based on the scores
 }
 \note{
 We have showed that the median-based prevalence estimator is better
@@ -27,10 +27,13 @@ data("periodontal")
 theta <- mean(periodontal$ti)
 Y_A <- average_scoring(periodontal$ni, periodontal$si)
 Y_M <- median_scoring(periodontal$ni, periodontal$si)
+Y_MAP <- MAP_scoring(periodontal$ni, periodontal$si)
 hat_theta_A <- prevalence_estimate(Y_A)
 hat_theta_M <- prevalence_estimate(Y_M)
+hat_theta_MAP <- prevalence_estimate(Y_MAP)
 cat("The average-based prevalence estimate is ", hat_theta_A, "\n")
 cat("The median-based prevalence estimate is ", hat_theta_M, "\n")
+cat("The MAP-based prevalence estimate is ", hat_theta_MAP, "\n")
 cat("The prevalence in the dataset is ", theta, "\n")
 
 }

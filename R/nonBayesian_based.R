@@ -15,15 +15,6 @@
 #' @examples
 #' data("periodontal")
 #' Y_A <- average_scoring(periodontal$ni, periodontal$si)
-#' Y_M <- median_scoring(periodontal$ni, periodontal$si)
-#' In order to compute the likelihood-based scores, we need to know theta,
-#' p and q which can be estimated in this example as follows:
-#' theta_hat <- mean(periodontal$ti)
-#' cat("The prevalence in the data is ", theta_hat, "\n")
-#' p_hat <- with(periodontal, sum(si[ti==0])/sum(ni[ti==0]))
-#' q_hat <- with(periodontal, 1 - sum(si[ti==1])/sum(ni[ti==1]))
-#' Y_L <- likelihood_scoring(periodontal$ni, periodontal$si,
-#'                           list(theta=theta_hat, p=p_hat, q=q_hat))
 #'
 #' @name non_bayesian_scoring
 #'
@@ -34,6 +25,11 @@ average_scoring <- function(ni, si) {
 }
 
 #' @rdname non_bayesian_scoring
+#'
+#' @examples
+#' data("periodontal")
+#' Y_M <- median_scoring(periodontal$ni, periodontal$si)
+#'
 #' @export
 median_scoring <- function(ni, si) {
   ifelse(si == ni/2, .5, ifelse(si > ni/2, 1, 0))
@@ -51,10 +47,23 @@ likelihood_scoring <- function(ni, si, param) {
     (theta*dbinom(si, ni, 1-q) + (1-theta)*dbinom(si, ni, p))
 }
 
+#' @rdname non_bayesian_scoring
+#' @export
+#'
+#' @examples
+#' data("periodontal")
+#' fit <- EMFit(periodontal$si,periodontal$ni)
+#' Y_MAP <- MAP_scoring(periodontal$ni, periodontal$si,fit)
+#'
+#' @seealso [EMFit]
+MAP_scoring <- function(ni, si, fit) {
+  likelihood_scoring(ni, si, fit$theta)
+}
+
 #' Classification based on a thresholding of the scores
 #'
 #' @param scores Numeric vector of the scores, computed with
-#'               [average_scoring], [median_scoring] or [bayesian_scoring]
+#'               [average_scoring], [median_scoring], [MAP_scoring] or [bayesian_scoring]
 #' @param vL The lower threshold
 #' @param vU The upper threshold
 #' @return A numeric vector of the classification (where .5 = inconclusive)
@@ -74,10 +83,10 @@ classify_with_scores <- function(scores, vL, vU) {
   ifelse(scores < vL, 0, ifelse(scores > vU, 1, .5))
 }
 
-#' Compute the average- and median-based prevalence estimates based on the scores
+#' Compute the average-/median- or MAP-based prevalence estimates based on the scores
 #'
 #' @param scores Numeric vector of the scores, computed with
-#'               [average_scoring] or [median_scoring]
+#'               [average_scoring], [median_scoring] or [MAP_scoring]
 #' @return A numeric value of the prevalence estimate
 #'
 #' @note We have showed that the median-based prevalence estimator is better
@@ -90,10 +99,13 @@ classify_with_scores <- function(scores, vL, vU) {
 #' theta <- mean(periodontal$ti)
 #' Y_A <- average_scoring(periodontal$ni, periodontal$si)
 #' Y_M <- median_scoring(periodontal$ni, periodontal$si)
+#' Y_MAP <- MAP_scoring(periodontal$ni, periodontal$si)
 #' hat_theta_A <- prevalence_estimate(Y_A)
 #' hat_theta_M <- prevalence_estimate(Y_M)
+#' hat_theta_MAP <- prevalence_estimate(Y_MAP)
 #' cat("The average-based prevalence estimate is ", hat_theta_A, "\n")
 #' cat("The median-based prevalence estimate is ", hat_theta_M, "\n")
+#' cat("The MAP-based prevalence estimate is ", hat_theta_MAP, "\n")
 #' cat("The prevalence in the dataset is ", theta, "\n")
 #'
 #' @export

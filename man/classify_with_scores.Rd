@@ -8,7 +8,7 @@ classify_with_scores(scores, vL, vU)
 }
 \arguments{
 \item{scores}{Numeric vector of the scores, computed with
-\link{average_scoring}, \link{median_scoring} or \link{bayesian_scoring}}
+\link{average_scoring}, \link{median_scoring}, \link{MAP_scoring} or \link{bayesian_scoring}}
 
 \item{vL}{The lower threshold}
 

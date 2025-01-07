@@ -5,6 +5,7 @@
 \alias{average_scoring}
 \alias{median_scoring}
 \alias{likelihood_scoring}
+\alias{MAP_scoring}
 \title{Non-Bayesian scoring methods}
 \usage{
 average_scoring(ni, si)
@@ -12,6 +13,8 @@ average_scoring(ni, si)
 median_scoring(ni, si)
 
 likelihood_scoring(ni, si, param)
+
+MAP_scoring(ni, si, fit)
 }
 \arguments{
 \item{ni}{Numeric vector of \eqn{n_i}'s, the total numbers of replicates for each individual}
@@ -38,14 +41,15 @@ practice.
 \examples{
 data("periodontal")
 Y_A <- average_scoring(periodontal$ni, periodontal$si)
-Y_M <- median_scoring(periodontal$ni, periodontal$si)
-In order to compute the likelihood-based scores, we need to know theta,
-p and q which can be estimated in this example as follows:
-theta_hat <- mean(periodontal$ti)
-cat("The prevalence in the data is ", theta_hat, "\n")
-p_hat <- with(periodontal, sum(si[ti==0])/sum(ni[ti==0]))
-q_hat <- with(periodontal, 1 - sum(si[ti==1])/sum(ni[ti==1]))
-Y_L <- likelihood_scoring(periodontal$ni, periodontal$si,
-                          list(theta=theta_hat, p=p_hat, q=q_hat))
 
+data("periodontal")
+Y_M <- median_scoring(periodontal$ni, periodontal$si)
+
+data("periodontal")
+fit <- EMFit(periodontal$si,periodontal$ni)
+Y_MAP <- MAP_scoring(periodontal$ni, periodontal$si,fit)
+
+}
+\seealso{
+\link{EMFit}
 }

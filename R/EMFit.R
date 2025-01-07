@@ -25,6 +25,7 @@
 #'  estimate the parameters.}
 #' }
 #'
+#' @importFrom stats rbinom dbinom
 #'
 #' @examples
 #' data("periodontal")
