@@ -40,8 +40,8 @@
 #'@seealso [classify_with_scores]
 #'
 #' @export
-EMFit <- function(si,ni,ti=NULL,prior=list(a_FP=2, b_FP=2,
-                                           a_FN=2, b_FN=2),
+EMFit <- function(si,ni,ti=NULL,prior=list(a_FP=1, b_FP=1,
+                                           a_FN=1, b_FN=1),
                   N_init=20,maxIter=1e3,errorMin=1e-7){
   ### Inner functions
   getLikelihood_MC <- function(ni,si,ti,p,q,theta,N=20){
@@ -248,8 +248,8 @@ EMFit <- function(si,ni,ti=NULL,prior=list(a_FP=2, b_FP=2,
 #'@seealso [classify_with_scores,EMFit]
 cvEM <- function(ni,si,ti=NULL,N_cv=NULL,
                  N_init=20,maxIter=1e3,errorMin=1e-7,
-                 prior=list(a_FP=2, b_FP=2,
-                            a_FN=2, b_FN=2)){
+                 prior=list(a_FP=1, b_FP=1,
+                            a_FN=1, b_FN=1)){
   n <- length(ni)
   if(is.null(N_cv)) N_cv <- min(20,n)
   if(N_cv < 2)stop("Choose at least 2 folds")
