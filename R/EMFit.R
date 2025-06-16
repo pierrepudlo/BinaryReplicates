@@ -7,7 +7,12 @@
 #' @param N_init The number of initializations if \code{ti} is not provided. Default to 20
 #' @param maxIter The maximum number of iterations if EM algorithm is used. Default to 1e3
 #' @param errorMin The minimum error computed if EM algorithm is used. Default to 1e-7
-#' @param correction Whether or not we want to correct the ML to avoid going to 0. Default to TRUE
+#' @param prior A list of prior parameters for the model. The prior distribution is as follows:
+#'
+#' \itemize{
+#' \item The false positivity rate: \eqn{p \sim \text{Beta}(a_{FP}, b_{FP})}
+#' \item The false negativity rate: \eqn{q \sim \text{Beta}(a_{FN}, b_{FN})}
+#' }
 #' @return A list with the following components:
 #' \itemize{
 #' \item{score}{ The estimated values of the scores}
@@ -35,9 +40,9 @@
 #'@seealso [classify_with_scores]
 #'
 #' @export
-EMFit <- function(si,ni,ti=NULL,
-                  N_init=20,maxIter=1e3,errorMin=1e-7,
-                  correction=TRUE){
+EMFit <- function(si,ni,ti=NULL,prior=list(a_FP=2, b_FP=2,
+                                           a_FN=2, b_FN=2),
+                  N_init=20,maxIter=1e3,errorMin=1e-7){
   ### Inner functions
   getLikelihood_MC <- function(ni,si,ti,p,q,theta,N=20){
     n <- length(ti)
@@ -65,7 +70,7 @@ EMFit <- function(si,ni,ti=NULL,
   }
 
   # Fit the model
-  emBin <- function(si,ni,ti=NULL,maxIter=1e3,errorMin=1e-7, correction=TRUE){
+  emBin <- function(si,ni,ti=NULL,maxIter=1e3,errorMin=1e-7, prior=prior){
     n <- length(si)
     if(!is.null(ti) & !any(is.na(ti))){
       theta_hat <- mean(ti)
@@ -86,17 +91,23 @@ EMFit <- function(si,ni,ti=NULL,
       iter <- 1
       error= 2*errorMin
       theta_hat <- mean(score)
-      if (correction){
-        # p_hat <- sum(si[score<1/2])/sum(ni[score<1/2])
-        p_hat <- (sum(si*(1-score)) + 1)/(sum(ni*(1-score)) + 2)
-        # q_hat <- sum((ni-si)[score>=1/2])/sum(ni[score>=1/2])
-        q_hat <- (sum((ni-si)*score) + 1)/(sum(ni*score) + 2)
-      } else {
-        # p_hat <- sum(si[score<1/2])/sum(ni[score<1/2])
-        p_hat <- sum(si*(1-score))/sum(ni*(1-score))
-        # q_hat <- sum((ni-si)[score>=1/2])/sum(ni[score>=1/2])
-        q_hat <- sum((ni-si)*score)/sum(ni*score)
-      }
+      # if (correction){
+      #   # p_hat <- sum(si[score<1/2])/sum(ni[score<1/2])
+      #   # p_hat <- (sum(si*(1-score)) + 1)/(sum(ni*(1-score)) + 2)
+      #   p_hat <- (sum(si*(1-score)) + 1)/(sum(ni*(1-score)) + 6)
+      #   # q_hat <- sum((ni-si)[score>=1/2])/sum(ni[score>=1/2])
+      #   # q_hat <- (sum((ni-si)*score) + 1)/(sum(ni*score) + 2)
+      #   q_hat <- (sum((ni-si)*score) + 1)/(sum(ni*score) + 6)
+      # } else {
+      #   # p_hat <- sum(si[score<1/2])/sum(ni[score<1/2])
+      #   p_hat <- sum(si*(1-score))/sum(ni*(1-score))
+      #   # q_hat <- sum((ni-si)[score>=1/2])/sum(ni[score>=1/2])
+      #   q_hat <- sum((ni-si)*score)/sum(ni*score)
+      # }
+      p_hat <- (sum(si*(1-score)) + prior$a_FP)/
+        (sum(ni*(1-score)) + prior$a_FP + prior$b_FP)
+      q_hat <- (sum((ni-si)*score) + prior$a_FN)/
+        (sum(ni*score) + prior$a_FN + prior$b_FN)
       # p_hat=q_hat <- 1/2
       p_hat <- rbeta(1,2,2)
       q_hat <- rbeta(1,2,2)
@@ -115,19 +126,29 @@ EMFit <- function(si,ni,ti=NULL,
         p_hat_0 <- p_hat
         q_hat_0 <- q_hat
         theta_hat <- mean(score)
-        if (correction) {
-          p_hat <- (sum(si*(1-score)) + 1)/(sum(ni*(1-score)) + 2)
-        } else {
-          p_hat <- sum(si*(1-score))/sum(ni*(1-score))
-        }
+        # if (correction) {
+        #   # p_hat <- (sum(si*(1-score)) + 1)/(sum(ni*(1-score)) + 2)
+        #   p_hat <- (sum(si*(1-score)) + 1)/(sum(ni*(1-score)) + 6)
+        # } else {
+        #   p_hat <- sum(si*(1-score))/sum(ni*(1-score))
+        # }
+        p_hat <- (sum(si*(1-score)) + prior$a_FP)/
+          (sum(ni*(1-score)) + prior$a_FP + prior$b_FP)
+        q_hat <- (sum((ni-si)*score) + prior$a_FN)/
+          (sum(ni*score) + prior$a_FN + prior$b_FN)
         ps <- c(ps,p_hat)
         qs <- c(qs,q_hat)
         thetas <- c(thetas,theta_hat)
-        if (correction) {
-          q_hat <- (sum((ni-si)*score) + 1)/(sum(ni*score) + 2)
-        } else {
-          q_hat <- sum((ni-si)*score)/sum(ni*score)
-        }
+        # if (correction) {
+        #   # q_hat <- (sum((ni-si)*score) + 1)/(sum(ni*score) + 2)
+        #   q_hat <- (sum((ni-si)*score) + 1)/(sum(ni*score) + 6)
+        # } else {
+        #   q_hat <- sum((ni-si)*score)/sum(ni*score)
+        # }
+        p_hat <- (sum(si*(1-score)) + prior$a_FP)/
+          (sum(ni*(1-score)) + prior$a_FP + prior$b_FP)
+        q_hat <- (sum((ni-si)*score) + prior$a_FN)/
+          (sum(ni*score) + prior$a_FN + prior$b_FN)
         if(is.na(q_hat))q_hat <- runif(1,0,1/2)
         if(p_hat>1/2 & q_hat>1/2){
           p_hat <- 1-p_hat
@@ -147,7 +168,7 @@ EMFit <- function(si,ni,ti=NULL,
   ### ---------------
 
   if(!is.null(ti) & !any(is.na(ti))){
-    out <- emBin(si,ni,ti,correction=correction,
+    out <- emBin(si,ni,ti,prior=prior,
                  errorMin = errorMin,maxIter = maxIter)
   } else {
     # result <- matrix(NA,N_init,5)
@@ -157,7 +178,7 @@ EMFit <- function(si,ni,ti=NULL,
     allRes <- list()
     all_initializations <- list()
     for(i in 1:N_init){
-      allRes[[i]] <- emBin(si,ni,correction=correction,
+      allRes[[i]] <- emBin(si,ni,prior=prior,
                            errorMin = errorMin,maxIter = maxIter)
       tii <- allRes[[i]]$ti_clas
       parai <- allRes[[i]]$parameters_hat
@@ -188,7 +209,13 @@ EMFit <- function(si,ni,ti=NULL,
 #' corresponding to leave-one-out cross-validation.
 #' @param maxIter The maximum number of iterations if EM algorithm is used. Default to 1e3
 #' @param errorMin The minimum error computed if EM algorithm is used. Default to 1e-7
-#' @param correction Whether or not we want to correct the ML to avoid going to 0. Default to TRUE
+#' @param prior A list of prior parameters for the model. The prior distribution is as follows:
+#'
+#' \itemize{
+#' \item The false positivity rate: \eqn{p \sim \text{Beta}(a_{FP}, b_{FP})}
+#' \item The false negativity rate: \eqn{q \sim \text{Beta}(a_{FN}, b_{FN})}
+#' }
+#'
 #' @return A list with the following components:
 #' \itemize{
 #' \item{score}{ The estimated values of the scores}
@@ -221,7 +248,8 @@ EMFit <- function(si,ni,ti=NULL,
 #'@seealso [classify_with_scores,EMFit]
 cvEM <- function(ni,si,ti=NULL,N_cv=NULL,
                  N_init=20,maxIter=1e3,errorMin=1e-7,
-                 correction=TRUE){
+                 prior=list(a_FP=2, b_FP=2,
+                            a_FN=2, b_FN=2)){
   n <- length(ni)
   if(is.null(N_cv)) N_cv <- min(20,n)
   if(N_cv < 2)stop("Choose at least 2 folds")
@@ -250,7 +278,7 @@ cvEM <- function(ni,si,ti=NULL,N_cv=NULL,
     }
     MODELS[[i]] <- EMFit(si = si_train,ni = ni_train,ti = ti_train,
                          N_init=N_init,maxIter=maxIter,errorMin=errorMin,
-                         correction=correction)
+                         prior=prior)
     PREDICTIONS[[i]] <- list()
     PREDICTIONS[[i]]$scores_predicted <- likelihood_scoring(ni_test,si_test,MODELS[[i]]$parameters_hat)
     names(PREDICTIONS[[i]]$scores_predicted) <- which(id_test)
