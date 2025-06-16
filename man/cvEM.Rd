@@ -12,7 +12,7 @@ cvEM(
   N_init = 20,
   maxIter = 1000,
   errorMin = 1e-07,
-  correction = TRUE
+  prior = list(a_FP = 1, b_FP = 1, a_FN = 1, b_FN = 1)
 )
 }
 \arguments{
@@ -33,7 +33,12 @@ corresponding to leave-one-out cross-validation.}
 
 \item{errorMin}{The minimum error computed if EM algorithm is used. Default to 1e-7}
 
-\item{correction}{Whether or not we want to correct the ML to avoid going to 0. Default to TRUE}
+\item{prior}{A list of prior parameters for the model. The prior distribution is as follows:
+
+\itemize{
+\item The false positivity rate: \eqn{p \sim \text{Beta}(a_{FP}, b_{FP})}
+\item The false negativity rate: \eqn{q \sim \text{Beta}(a_{FN}, b_{FN})}
+}}
 }
 \value{
 A list with the following components:
