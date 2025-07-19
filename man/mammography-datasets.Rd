@@ -7,27 +7,27 @@
 \alias{observed}
 \title{A mammography dataset}
 \format{
-A data frame \emph{mammography} with 148 rows and 3 variables
+The data frame \code{mammography} has 148 rows and 3 variables
 \describe{
 \item{ti}{True latent state of the individual (1=positive, 0=negative)}
 \item{ni}{Number of mammography tests performed for each individual}
 \item{si}{Number of positive mammography tests for each individual}
 }
-and an 110x148 array \emph{observed} with the observed replicates, one column
-for each individual.
 
-An object of class \code{data.frame} with 148 rows and 3 columns.
-
-An object of class \code{matrix} (inherits from \code{array}) with 110 rows and 148 columns.
+The matrix \code{observed} is a 110x148 array with the observed replicates, one column
+for each individual. The rows correspond to the replicates, and the values are either 0 or 1.
+}
+\source{
+Beam C, Conant E, Sickles E. Association of volume and volume-independent factors with accuracy in screening mammogram interpretation. \emph{JNCI.} 2003;95:282-290.
 }
 \usage{
-data(mammography, observed)
+data(mammography)
 
-mammography
-
-observed
+data(observed)
 }
 \description{
 Data from a mammography screening program.
+The dataset is not the original dataset, but an imputated dataset based on
+the summary statistics available publicly.
 }
 \keyword{datasets}

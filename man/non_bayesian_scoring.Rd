@@ -25,6 +25,8 @@ MAP_scoring(ni, si, fit)
 \code{theta} The probability of that \eqn{T=1}, i.e., the prevalence,
 \code{p} The false positivity rate
 \code{q} The false negativity rate}
+
+\item{fit}{The object returned by \link{EMFit} containing the results of the EM algorithm}
 }
 \value{
 A numeric vector of the scores

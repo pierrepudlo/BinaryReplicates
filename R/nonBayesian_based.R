@@ -7,6 +7,7 @@
 #'   \code{theta} The probability of that \eqn{T=1}, i.e., the prevalence,
 #'   \code{p} The false positivity rate
 #'   \code{q} The false negativity rate
+#' @param fit The object returned by [EMFit] containing the results of the EM algorithm
 #' @return A numeric vector of the scores
 #'
 #' @note For likelihood based scores, the values of \eqn{\theta}, \eqn{p} and
@@ -67,7 +68,7 @@ likelihood_scoring <- function(ni, si, param) {
 #'
 #' @seealso [EMFit]
 MAP_scoring <- function(ni, si, fit) {
-  likelihood_scoring(ni, si, fit$theta)
+  likelihood_scoring(ni, si, fit$parameters_hat)
 }
 
 #' Classification based on a thresholding of the scores
@@ -109,7 +110,8 @@ classify_with_scores <- function(scores, vL, vU) {
 #' theta <- mean(periodontal$ti)
 #' Y_A <- average_scoring(periodontal$ni, periodontal$si)
 #' Y_M <- median_scoring(periodontal$ni, periodontal$si)
-#' Y_MAP <- MAP_scoring(periodontal$ni, periodontal$si)
+#' fit <- EMFit(periodontal$si,periodontal$ni)
+#' Y_MAP <- MAP_scoring(periodontal$ni, periodontal$si, fit)
 #' hat_theta_A <- prevalence_estimate(Y_A)
 #' hat_theta_M <- prevalence_estimate(Y_M)
 #' hat_theta_MAP <- prevalence_estimate(Y_MAP)

@@ -34,7 +34,9 @@
 #'
 #' @examples
 #' data("periodontal")
+#' # Get ML estimate knowing the true values of the latent ti's
 #' periodontal_ml <- EMFit(periodontal$si,periodontal$ni,periodontal$ti)
+#' # Get MAP estimate without knowing the true values of the latent ti's
 #' periodontal_EM <- EMFit(periodontal$si,periodontal$ni,ti = NULL)
 #'
 #' @seealso [classify_with_scores]
