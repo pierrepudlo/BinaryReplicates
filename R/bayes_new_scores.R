@@ -18,8 +18,7 @@
 #' where each parameter \eqn{(\theta_{T,k}, p_k, q_k)_k} is sampled from the
 #' posterior distribution, output of the function [BayesianFit]. \eqn{K} is the total number of sampled parameters.
 #' @importFrom rstan extract
-#' @importFrom dplyr summarise group_by ungroup mutate
-#' @importFrom magrittr %>%
+#' @importFrom stats aggregate
 #' @return
 #' The `predict_scores` function returns the predictive Bayesian scores in a numeric vector.
 #' The predictive Bayesian scores are the posterior probabilities that the true
@@ -29,17 +28,19 @@
 #' data("periodontal")
 #' theta <- mean(periodontal$ti)
 #' fitBay <- BayesianFit(periodontal$ni, periodontal$si, chains = 2, iter = 500)
-#' fitMAP <- EMFit(periodontal$si,periodontal$ni,correction = T )
+#' fitMAP <- EMFit(periodontal$si,periodontal$ni,correction = TRUE)
 #'
 #' ## Comparaison Bayesian <--> MAP
 #' ni <- 200
 #' Ni <- rep(ni,ni+1)
 #' Si <- 0:ni
-#' scores <- cbind(predict_scores(Ni,Si,fitBay),likelihood_scoring(Ni,Si,fitMAP$parameters_hat))
-#' matplot(Si,scores,type = "l",lty = 1,col = 1:2,ylab = "Scores",xlab = "Number of Successes",main = "")
+#' scores <- cbind(predict_scores(Ni,Si,fitBay),
+#'                 likelihood_scoring(Ni,Si,fitMAP$parameters_hat))
+#' matplot(Si,scores,type = "l",lty = 1,col = 1:2,
+#'         ylab = "Scores",xlab = "Number of Successes",main = "")
 predict_scores <- function(newdata_ni, newdata_si, fit) {
   if (length(newdata_ni) != length(newdata_si)) {
-    stop("newdata_ni and newdata_ni must have the same length")
+    stop("newdata_ni and newdata_si must have the same length")
   }
   n <- length(newdata_ni)
   # Extract the latent variable
@@ -53,10 +54,15 @@ predict_scores <- function(newdata_ni, newdata_si, fit) {
     theta = rep(post$theta, times = n),
     p = rep(post$p, times = n),
     q = rep(post$q, times = n)
-  ) %>%
-    mutate(Y_B = likelihood_scoring(ni, si, list(theta=theta, p=p, q=q)))
-  out <- newdata %>%
-    group_by(id) %>%
-    summarise(Y_B = mean(Y_B), .groups="keep")
+  )
+
+  # Calculate Y_B
+  newdata$Y_B <- likelihood_scoring(newdata$ni, newdata$si,
+                                    list(theta = newdata$theta,
+                                         p = newdata$p,
+                                         q = newdata$q))
+
+  # Calculate mean Y_B by id using base R
+  out <- aggregate(Y_B ~ id, data = newdata, FUN = mean)
   return(out$Y_B)
 }

@@ -3,9 +3,10 @@
 #' @title Non-Bayesian scoring methods
 #' @param ni Numeric vector of \eqn{n_i}'s, the total numbers of replicates for each individual
 #' @param si Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual
-#' @param theta The probability of that \eqn{T=1}, i.e., the prevalence
-#' @param p The false positivity rate
-#' @param q The false negativity rate
+#' @param param A list with 3 entries:
+#'   \code{theta} The probability of that \eqn{T=1}, i.e., the prevalence,
+#'   \code{p} The false positivity rate
+#'   \code{q} The false negativity rate
 #' @return A numeric vector of the scores
 #'
 #' @note For likelihood based scores, the values of \eqn{\theta}, \eqn{p} and
@@ -15,6 +16,15 @@
 #' @examples
 #' data("periodontal")
 #' Y_A <- average_scoring(periodontal$ni, periodontal$si)
+#' Y_M <- median_scoring(periodontal$ni, periodontal$si)
+#' # In order to compute the likelihood-based scores, we need to know theta,
+#' # p and q which can be estimated in this example as follows:
+#' theta_hat <- mean(periodontal$ti)
+#' cat("The prevalence in the data is ", theta_hat, "\n")
+#' p_hat <- with(periodontal, sum(si[ti==0])/sum(ni[ti==0]))
+#' q_hat <- with(periodontal, 1 - sum(si[ti==1])/sum(ni[ti==1]))
+#' Y_L <- likelihood_scoring(periodontal$ni, periodontal$si,
+#'                           list(theta=theta_hat, p=p_hat, q=q_hat))
 #'
 #' @name non_bayesian_scoring
 #'

@@ -11,13 +11,16 @@ classify_with_scores_cvEM(object, ti = NULL, vL = 0.5, vU = 0.5)
 \arguments{
 \item{object}{An object of class cvEM}
 
+\item{ti}{Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual
+If \code{NULL}, the EM algorithm is used to estimate the parameters. Default to \code{NULL}. See details}
+
 \item{vL}{The lower threshold for classification. Default to 0.5}
 
 \item{vU}{The upper threshold for classification. Default to 0.5}
 }
 \value{
 A cvEM object with the following components:
-\itemize{
+\describe{
 \item{predictions}{ A list of the predictions for each fold}
 \item{risk}{ The empirical risk if \eqn{t_i} is provided}
 }

@@ -1,6 +1,6 @@
 ^BinaryReplicates\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
-\tmp
+^tmp/
 ^doc$
 ^Meta$
