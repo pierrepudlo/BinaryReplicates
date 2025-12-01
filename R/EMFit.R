@@ -40,8 +40,8 @@
 #'@seealso [classify_with_scores]
 #'
 #' @export
-EMFit <- function(si,ni,ti=NULL,prior=list(a_FP=1, b_FP=1,
-                                           a_FN=1, b_FN=1),
+EMFit <- function(si,ni,ti=NULL,prior=list(a_FP=2, b_FP=2,
+                                           a_FN=2, b_FN=2),
                   N_init=20,maxIter=1e3,errorMin=1e-7){
   ### Inner functions
   getLikelihood_MC <- function(ni,si,ti,p,q,theta,N=20){
@@ -104,10 +104,10 @@ EMFit <- function(si,ni,ti=NULL,prior=list(a_FP=1, b_FP=1,
       #   # q_hat <- sum((ni-si)[score>=1/2])/sum(ni[score>=1/2])
       #   q_hat <- sum((ni-si)*score)/sum(ni*score)
       # }
-      p_hat <- (sum(si*(1-score)) + prior$a_FP)/
-        (sum(ni*(1-score)) + prior$a_FP + prior$b_FP)
-      q_hat <- (sum((ni-si)*score) + prior$a_FN)/
-        (sum(ni*score) + prior$a_FN + prior$b_FN)
+      p_hat <- (sum(si*(1-score)) + prior$a_FP-1)/
+        (sum(ni*(1-score)) + prior$a_FP + prior$b_FP-2)
+      q_hat <- (sum((ni-si)*score) + prior$a_FN-1)/
+        (sum(ni*score) + prior$a_FN + prior$b_FN-2)
       # p_hat=q_hat <- 1/2
       p_hat <- rbeta(1,2,2)
       q_hat <- rbeta(1,2,2)
@@ -132,10 +132,10 @@ EMFit <- function(si,ni,ti=NULL,prior=list(a_FP=1, b_FP=1,
         # } else {
         #   p_hat <- sum(si*(1-score))/sum(ni*(1-score))
         # }
-        p_hat <- (sum(si*(1-score)) + prior$a_FP)/
-          (sum(ni*(1-score)) + prior$a_FP + prior$b_FP)
-        q_hat <- (sum((ni-si)*score) + prior$a_FN)/
-          (sum(ni*score) + prior$a_FN + prior$b_FN)
+        p_hat <- (sum(si*(1-score)) + prior$a_FP-1)/
+          (sum(ni*(1-score)) + prior$a_FP + prior$b_FP-2)
+        q_hat <- (sum((ni-si)*score) + prior$a_FN-1)/
+          (sum(ni*score) + prior$a_FN + prior$b_FN-2)
         ps <- c(ps,p_hat)
         qs <- c(qs,q_hat)
         thetas <- c(thetas,theta_hat)
@@ -145,10 +145,10 @@ EMFit <- function(si,ni,ti=NULL,prior=list(a_FP=1, b_FP=1,
         # } else {
         #   q_hat <- sum((ni-si)*score)/sum(ni*score)
         # }
-        p_hat <- (sum(si*(1-score)) + prior$a_FP)/
-          (sum(ni*(1-score)) + prior$a_FP + prior$b_FP)
-        q_hat <- (sum((ni-si)*score) + prior$a_FN)/
-          (sum(ni*score) + prior$a_FN + prior$b_FN)
+        p_hat <- (sum(si*(1-score)) + prior$a_FP-1)/
+          (sum(ni*(1-score)) + prior$a_FP + prior$b_FP-2)
+        q_hat <- (sum((ni-si)*score) + prior$a_FN-1)/
+          (sum(ni*score) + prior$a_FN + prior$b_FN-2)
         if(is.na(q_hat))q_hat <- runif(1,0,1/2)
         if(p_hat>1/2 & q_hat>1/2){
           p_hat <- 1-p_hat
@@ -248,8 +248,8 @@ EMFit <- function(si,ni,ti=NULL,prior=list(a_FP=1, b_FP=1,
 #'@seealso [classify_with_scores,EMFit]
 cvEM <- function(ni,si,ti=NULL,N_cv=NULL,
                  N_init=20,maxIter=1e3,errorMin=1e-7,
-                 prior=list(a_FP=1, b_FP=1,
-                            a_FN=1, b_FN=1)){
+                 prior=list(a_FP=2, b_FP=2,
+                            a_FN=2, b_FN=2)){
   n <- length(ni)
   if(is.null(N_cv)) N_cv <- min(20,n)
   if(N_cv < 2)stop("Choose at least 2 folds")
