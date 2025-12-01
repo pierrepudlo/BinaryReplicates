@@ -39,12 +39,14 @@ posterior distribution, output of the function \link{BayesianFit}. \eqn{K} is th
 data("periodontal")
 theta <- mean(periodontal$ti)
 fitBay <- BayesianFit(periodontal$ni, periodontal$si, chains = 2, iter = 500)
-fitMAP <- EMFit(periodontal$si,periodontal$ni,correction = T )
+fitMAP <- EMFit(periodontal$si,periodontal$ni)
 
 ## Comparaison Bayesian <--> MAP
 ni <- 200
 Ni <- rep(ni,ni+1)
 Si <- 0:ni
-scores <- cbind(predict_scores(Ni,Si,fitBay),likelihood_scoring(Ni,Si,fitMAP$parameters_hat))
-matplot(Si,scores,type = "l",lty = 1,col = 1:2,ylab = "Scores",xlab = "Number of Successes",main = "")
+scores <- cbind(predict_scores(Ni,Si,fitBay),
+                likelihood_scoring(Ni,Si,fitMAP$parameters_hat))
+matplot(Si,scores,type = "l",lty = 1,col = 1:2,
+        ylab = "Scores",xlab = "Number of Successes",main = "")
 }

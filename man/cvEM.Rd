@@ -25,30 +25,17 @@ If \code{NULL}, the EM algorithm is used to estimate the parameters. Default to 
 
 \item{N_cv}{The number of folds. Default to 20}
 
-\item{N_init}{The number of initializations if \code{ti} is not provided. Def
-ault to 20 if  observations otherwise default to the number of observations,
-corresponding to leave-one-out cross-validation.}
+\item{N_init}{The number of initializations if \code{ti} is not provided. Default to 20 if  observations otherwise default to the number of observations, corresponding to leave-one-out cross-validation.}
 
 \item{maxIter}{The maximum number of iterations if EM algorithm is used. Default to 1e3}
 
 \item{errorMin}{The minimum error computed if EM algorithm is used. Default to 1e-7}
 
-\item{prior}{A list of prior parameters for the model. The prior distribution is as follows:
-
-\itemize{
-\item The false positivity rate: \eqn{p \sim \text{Beta}(a_{FP}, b_{FP})}
-\item The false negativity rate: \eqn{q \sim \text{Beta}(a_{FN}, b_{FN})}
-}}
+\item{prior}{A list of prior parameters for the model. The prior distribution is as follows:}
 }
 \value{
 A list with the following components:
-\itemize{
-\item{score}{ The estimated values of the scores}
-\item{parameters_hat}{ The estimated values of the parameters \eqn{\theta}, \eqn{p} and \eqn{q}}
-}
-
-A list with the following components:
-\itemize{
+\describe{
 \item{models}{ A list of the models for each fold}
 \item{predictions}{ A list of the predictions for each fold}
 }
@@ -58,12 +45,12 @@ Function to perform cross-validation in the EM algorithm
 }
 \details{
 This function chooses its algorithm according to what is provided in the \code{ti} argument:
-\itemize{
-\item{\emph{\code{ti} is fully provided}: }{the function computes the \emph{Maximum-A-Posteriori}
+\describe{
+\item{\code{ti} is fully provided}{The function computes the \emph{Maximum-A-Posteriori}
 estimate, with an explicit formula.}
-\item{\emph{\code{ti} is not provided}: }{the function uses the EM algorithm
+\item{\code{ti} is not provided}{The function uses the EM algorithm
 to estimate the parameters.}
-\item{\emph{\code{ti} is partially provided}: }{the function uses the EM algorithm to
+\item{\code{ti} is partially provided}{The function uses the EM algorithm to
 estimate the parameters.}
 }
 }
@@ -73,5 +60,5 @@ modelCV <- cvEM(periodontal$ni,periodontal$si)
 
 }
 \seealso{
-\link{classify_with_scores,EMFit}
+\link{classify_with_scores}, \link{EMFit}
 }

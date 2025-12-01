@@ -37,7 +37,7 @@ If \code{NULL}, the EM algorithm is used to estimate the parameters. Default to 
 }
 \value{
 A list with the following components:
-\itemize{
+\describe{
 \item{score}{ The estimated values of the scores}
 \item{parameters_hat}{ The estimated values of the parameters \eqn{\theta}, \eqn{p} and \eqn{q}}
 }
@@ -47,18 +47,20 @@ Compute the \emph{Maximum-A-Posteriori} estimate with the EM algorithm
 }
 \details{
 This function chooses its algorithm according to what is provided in the \code{ti} argument:
-\itemize{
-\item{\emph{\code{ti} is fully provided}: }{the function computes the \emph{Maximum-A-Posteriori}
+\describe{
+\item{\code{ti} is fully provided}{The function computes the \emph{Maximum-A-Posteriori}
 estimate, with an explicit formula.}
-\item{\emph{\code{ti} is not provided}: }{the function uses the EM algorithm
+\item{\code{ti} is not provided}{The function uses the EM algorithm
 to estimate the parameters.}
-\item{\emph{\code{ti} is partially provided}: }{the function uses the EM algorithm to
+\item{\code{ti} is partially provided}{The function uses the EM algorithm to
 estimate the parameters.}
 }
 }
 \examples{
 data("periodontal")
+# Get ML estimate knowing the true values of the latent ti's
 periodontal_ml <- EMFit(periodontal$si,periodontal$ni,periodontal$ti)
+# Get MAP estimate without knowing the true values of the latent ti's
 periodontal_EM <- EMFit(periodontal$si,periodontal$ni,ti = NULL)
 
 }

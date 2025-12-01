@@ -14,31 +14,33 @@
 #' \item The false negativity rate: \eqn{q \sim \text{Beta}(a_{FN}, b_{FN})}
 #' }
 #' @return A list with the following components:
-#' \itemize{
+#' \describe{
 #' \item{score}{ The estimated values of the scores}
 #' \item{parameters_hat}{ The estimated values of the parameters \eqn{\theta}, \eqn{p} and \eqn{q}}
 #' }
 #'
 #' @details
 #' This function chooses its algorithm according to what is provided in the \code{ti} argument:
-#' \itemize{
-#'  \item{\emph{\code{ti} is fully provided}: }{the function computes the *Maximum-A-Posteriori*
-#'  estimate, with an explicit formula.}
-#'  \item{\emph{\code{ti} is not provided}: }{the function uses the EM algorithm
-#'  to estimate the parameters.}
-#'  \item{\emph{\code{ti} is partially provided}: }{the function uses the EM algorithm to
-#'  estimate the parameters.}
+#' \describe{
+#'   \item{\code{ti} is fully provided}{The function computes the \emph{Maximum-A-Posteriori}
+#'   estimate, with an explicit formula.}
+#'   \item{\code{ti} is not provided}{The function uses the EM algorithm
+#'   to estimate the parameters.}
+#'   \item{\code{ti} is partially provided}{The function uses the EM algorithm to
+#'   estimate the parameters.}
 #' }
 #'
 #' @importFrom stats rbinom dbinom
 #'
 #' @examples
 #' data("periodontal")
+#' # Get ML estimate knowing the true values of the latent ti's
 #' periodontal_ml <- EMFit(periodontal$si,periodontal$ni,periodontal$ti)
+#' # Get MAP estimate without knowing the true values of the latent ti's
 #' periodontal_EM <- EMFit(periodontal$si,periodontal$ni,ti = NULL)
 #'
-#'@seealso [classify_with_scores]
-#'
+#' @seealso [classify_with_scores]
+#' @importFrom stats rbeta runif rbinom sd
 #' @export
 EMFit <- function(si,ni,ti=NULL,prior=list(a_FP=2, b_FP=2,
                                            a_FN=2, b_FN=2),
@@ -80,13 +82,13 @@ EMFit <- function(si,ni,ti=NULL,prior=list(a_FP=2, b_FP=2,
                   parameters_hat=data.frame(list(theta=theta_hat,p=p_hat,q=q_hat)))
     } else {
       if(is.null(ti)){
-        score <- rbeta(n,shape1 = si,shape2 = ni-si)#sample(c(0,1),n,replace=T)
+        score <- rbeta(n,shape1 = si,shape2 = ni-si)#sample(c(0,1),n,replace=TRUE)
         id_na <- 1:n
       } else {
         id_na <- which(is.na(ti))
         n_na <- length(id_na)
         score <- ti
-        score[id_na] <- rbeta(n,shape1 = si,shape2 = ni-si)[id_na]#(si/ni)[id_na]#sample(c(0,1),n_na,replace=T)
+        score[id_na] <- rbeta(n,shape1 = si,shape2 = ni-si)[id_na]#(si/ni)[id_na]#sample(c(0,1),n_na,replace=TRUE)
       }
       iter <- 1
       error= 2*errorMin
@@ -204,48 +206,35 @@ EMFit <- function(si,ni,ti=NULL,prior=list(a_FP=2, b_FP=2,
 #' @param ti Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual
 #'  If \code{NULL}, the EM algorithm is used to estimate the parameters. Default to \code{NULL}. See details
 #' @param N_cv The number of folds. Default to 20
-#' @param N_init The number of initializations if \code{ti} is not provided. Def
-#' ault to 20 if  observations otherwise default to the number of observations,
-#' corresponding to leave-one-out cross-validation.
+#' @param N_init The number of initializations if \code{ti} is not provided. Default to 20 if  observations otherwise default to the number of observations, corresponding to leave-one-out cross-validation.
 #' @param maxIter The maximum number of iterations if EM algorithm is used. Default to 1e3
 #' @param errorMin The minimum error computed if EM algorithm is used. Default to 1e-7
 #' @param prior A list of prior parameters for the model. The prior distribution is as follows:
 #'
-#' \itemize{
-#' \item The false positivity rate: \eqn{p \sim \text{Beta}(a_{FP}, b_{FP})}
-#' \item The false negativity rate: \eqn{q \sim \text{Beta}(a_{FN}, b_{FN})}
-#' }
-#'
-#' @return A list with the following components:
-#' \itemize{
-#' \item{score}{ The estimated values of the scores}
-#' \item{parameters_hat}{ The estimated values of the parameters \eqn{\theta}, \eqn{p} and \eqn{q}}
-#' }
-#'
 #' @details
 #' This function chooses its algorithm according to what is provided in the \code{ti} argument:
-#' \itemize{
-#'  \item{\emph{\code{ti} is fully provided}: }{the function computes the *Maximum-A-Posteriori*
-#'  estimate, with an explicit formula.}
-#'  \item{\emph{\code{ti} is not provided}: }{the function uses the EM algorithm
-#'  to estimate the parameters.}
-#'  \item{\emph{\code{ti} is partially provided}: }{the function uses the EM algorithm to
-#'  estimate the parameters.}
+#' \describe{
+#'   \item{\code{ti} is fully provided}{The function computes the \emph{Maximum-A-Posteriori}
+#'   estimate, with an explicit formula.}
+#'   \item{\code{ti} is not provided}{The function uses the EM algorithm
+#'   to estimate the parameters.}
+#'   \item{\code{ti} is partially provided}{The function uses the EM algorithm to
+#'   estimate the parameters.}
 #' }
 #'
 #'
 #' @return A list with the following components:
-#' \itemize{
+#' \describe{
 #' \item{models}{ A list of the models for each fold}
 #' \item{predictions}{ A list of the predictions for each fold}
 #' }
-#' @export
 #'
 #' @examples
 #' data("periodontal")
 #' modelCV <- cvEM(periodontal$ni,periodontal$si)
 #'
-#'@seealso [classify_with_scores,EMFit]
+#' @seealso [classify_with_scores], [EMFit]
+#' @export
 cvEM <- function(ni,si,ti=NULL,N_cv=NULL,
                  N_init=20,maxIter=1e3,errorMin=1e-7,
                  prior=list(a_FP=2, b_FP=2,
@@ -299,11 +288,13 @@ cvEM <- function(ni,si,ti=NULL,N_cv=NULL,
 #' \eqn{a=v_L}.
 #'
 #' @param object An object of class cvEM
+#' @param ti Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual
+#'  If \code{NULL}, the EM algorithm is used to estimate the parameters. Default to \code{NULL}. See details
 #' @param vL The lower threshold for classification. Default to 0.5
 #' @param vU The upper threshold for classification. Default to 0.5
 #'
 #' @return A cvEM object with the following components:
-#' \itemize{
+#' \describe{
 #' \item{predictions}{ A list of the predictions for each fold}
 #' \item{risk}{ The empirical risk if \eqn{t_i} is provided}
 #' }
