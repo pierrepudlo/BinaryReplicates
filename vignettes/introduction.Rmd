@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(BinaryReplicates)
 library(tidyverse)
+set.seed(42)
 ```
 
 The `BinaryReplicates` package provides tools for the analysis of binary replicates.
@@ -69,6 +70,17 @@ synth_data <- data.frame(ni = ni, si = si, ti=ti)
 
 We will use this dataset to illustrate the main functions of the package.
 
+## Parameter estimation with the EM algorithm
+
+Before scoring individuals, we can estimate the model parameters $\theta_T$, $p$, and $q$ using the EM algorithm. The `EMFit` function computes the Maximum-A-Posteriori (MAP) estimates:
+
+```{r}
+fit_em <- EMFit(ni, si)
+fit_em$parameters_hat
+```
+
+These estimates can then be used with `MAP_scoring` to compute likelihood-based scores without knowing the true parameter values.
+
 ## Scoring the individuals
 
 We provide various ways to score individuals in the dataset: each score is a number between $0$ and $1$. Higher values of the score indicate a higher probability of being in state $1$. The scoring methods are:
@@ -85,14 +97,46 @@ print(fit, pars = c("theta", "p", "q"))
 
 We can now add the scores to the dataset:
 ```{r}
-synth_data <- synth_data %>% 
+synth_data <- synth_data %>%
   mutate(Y_A = average_scoring(ni, si),
          Y_M = median_scoring(ni, si),
-         Y_L = likelihood_scoring(ni, si, list(theta=theta, p=p, q=q)),
+         Y_L = likelihood_scoring(ni, si, list(theta = theta, p = p, q = q)),
+         Y_MAP = MAP_scoring(ni, si, fit_em),
          Y_B = bayesian_scoring(ni, si, fit))
 ```
 
-Note that we have plugged in the true values of the parameters in the likelihood scoring function. In practice, we would use the estimates obtained from other methods, like the Bayesian fit.
+Note that we have plugged in the true values of the parameters in the likelihood scoring function (`Y_L`). In practice, the true parameters are unknown and we use the MAP estimates from `EMFit` instead, as shown with `Y_MAP`.
+
+## Credible intervals for model parameters
+
+The Bayesian fit provides credible intervals for the model parameters. By default, `credint` returns 90% credible intervals:
+
+```{r}
+credint(fit)
+```
+
+You can also request different confidence levels:
+
+```{r}
+credint(fit, level = 0.95)
+```
+
+## Prevalence estimation
+
+The prevalence $\theta_T$ can be estimated from the scores using `prevalence_estimate`, or directly from the Bayesian fit using `bayesian_prevalence_estimate`:
+
+```{r}
+theta_A <- prevalence_estimate(synth_data$Y_A)
+theta_M <- prevalence_estimate(synth_data$Y_M)
+theta_MAP <- prevalence_estimate(synth_data$Y_MAP)
+theta_B <- bayesian_prevalence_estimate(fit)
+
+cat("True prevalence:    ", theta, "\n")
+cat("Average-based:      ", round(theta_A, 3), "\n")
+cat("Median-based:       ", round(theta_M, 3), "\n")
+cat("MAP-based:          ", round(theta_MAP, 3), "\n")
+cat("Bayesian:           ", round(theta_B, 3), "\n")
+```
 
 ## Predicting the latent states
 
@@ -106,10 +150,11 @@ We can compute the predictions for the synthetic dataset as follows:
 ```{r}
 v_L <- .35
 v_U <- 1 - v_L
-synth_data <- synth_data %>% 
+synth_data <- synth_data %>%
   mutate(T_A = classify_with_scores(Y_A, v_L, v_U),
          T_M = classify_with_scores(Y_M, v_L, v_U),
          T_L = classify_with_scores(Y_L, v_L, v_U),
+         T_MAP = classify_with_scores(Y_MAP, v_L, v_U),
          T_B = classify_with_scores(Y_B, v_L, v_U))
 ```
 
@@ -117,15 +162,15 @@ We can now count how many times we decide in favor of $0$, $1$ or $1/2$ (inconcl
 ```{r}
 confusion <- synth_data %>%
   mutate(
-    Status = ifelse(ti==1, "T=1", "T=0"),
-    Average = T_A, Median = T_M, Likelihood = T_L, Bayesian = T_B) %>%
-  pivot_longer(cols = c(Average, Median, Likelihood, Bayesian), 
+    Status = ifelse(ti == 1, "T=1", "T=0"),
+    Average = T_A, Median = T_M, Likelihood = T_L, MAP = T_MAP, Bayesian = T_B) %>%
+  pivot_longer(cols = c(Average, Median, Likelihood, MAP, Bayesian),
                names_to = "Method", values_to = "Decision") %>%
   group_by(Status, Method, Decision) %>%
   summarise(count = n(), .groups = "keep") %>%
   ungroup() %>%
   mutate(count = as.integer(count)) %>%
-  pivot_wider(names_from = Decision, values_from = count, values_fill = 0) 
+  pivot_wider(names_from = Decision, values_from = count, values_fill = 0)
 confusion
 ```
 

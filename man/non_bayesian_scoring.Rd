@@ -22,9 +22,9 @@ MAP_scoring(ni, si, fit)
 \item{si}{Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual}
 
 \item{param}{A list with 3 entries:
-\code{theta} The probability of that \eqn{T=1}, i.e., the prevalence,
-\code{p} The false positivity rate
-\code{q} The false negativity rate}
+\code{theta} The probability that \eqn{T=1}, i.e., the prevalence,
+\code{p} The false positive rate,
+\code{q} The false negative rate.}
 
 \item{fit}{The object returned by \link{EMFit} containing the results of the EM algorithm}
 }
@@ -35,9 +35,9 @@ A numeric vector of the scores
 Compute the average-, median- and likelihood-based scores
 }
 \note{
-For likelihood based scores, the values of \eqn{\theta}, \eqn{p} and
-\eqn{q} are required. Consequently likelihood scoring is not reachable in
-practice.
+For likelihood-based scores, the values of \eqn{\theta}, \eqn{p} and
+\eqn{q} are required. Consequently, likelihood scoring is not directly applicable
+in practice without parameter estimates.
 }
 \examples{
 data("periodontal")
@@ -47,17 +47,17 @@ Y_M <- median_scoring(periodontal$ni, periodontal$si)
 # p and q which can be estimated in this example as follows:
 theta_hat <- mean(periodontal$ti)
 cat("The prevalence in the data is ", theta_hat, "\n")
-p_hat <- with(periodontal, sum(si[ti==0])/sum(ni[ti==0]))
-q_hat <- with(periodontal, 1 - sum(si[ti==1])/sum(ni[ti==1]))
+p_hat <- with(periodontal, sum(si[ti == 0]) / sum(ni[ti == 0]))
+q_hat <- with(periodontal, 1 - sum(si[ti == 1]) / sum(ni[ti == 1]))
 Y_L <- likelihood_scoring(periodontal$ni, periodontal$si,
-                          list(theta=theta_hat, p=p_hat, q=q_hat))
+                          list(theta = theta_hat, p = p_hat, q = q_hat))
 
 data("periodontal")
 Y_M <- median_scoring(periodontal$ni, periodontal$si)
 
 data("periodontal")
-fit <- EMFit(periodontal$si,periodontal$ni)
-Y_MAP <- MAP_scoring(periodontal$ni, periodontal$si,fit)
+fit <- EMFit(periodontal$ni, periodontal$si)
+Y_MAP <- MAP_scoring(periodontal$ni, periodontal$si, fit)
 
 }
 \seealso{

@@ -12,7 +12,8 @@
 #' @importFrom RcppParallel RcppParallelLibs
 #'
 #' @references
-#' Manuela Carenzi-Royer, Hadrien Lorenzo and Pierre Pudlo, Aix-Marseille Université.
+#' Royer-Carenzi, M., Lorenzo, H., & Pudlo, P. (in press). Reconciling Binary
+#' Replicates: Beyond the Average. \emph{Statistics in Medicine}.
 #'
 ## usethis namespace: end
 NULL

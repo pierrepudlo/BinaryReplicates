@@ -35,12 +35,12 @@ The model is a Bayesian model for binary replicates.
 The prior distribution is as follows:
 
 \itemize{
-\item The false positivity rate: \eqn{p \sim \text{Beta}(a_{FP}, b_{FP})}
-\item The false negativity rate: \eqn{q \sim \text{Beta}(a_{FN}, b_{FN})}
+\item The false positive rate: \eqn{p \sim \text{Beta}(a_{FP}, b_{FP})}
+\item The false negative rate: \eqn{q \sim \text{Beta}(a_{FN}, b_{FN})}
 \item The prevalence: \eqn{\theta \sim \text{Beta}(a_T, b_T)}
 }
 
-The statistical model considers that the true status are the latent
+The statistical model considers that the true statuses are the latent
 \deqn{T_i \sim \text{Bernoulli}(\theta).}
 
 And, given the true status \eqn{T_i}, the number of positive replicates is

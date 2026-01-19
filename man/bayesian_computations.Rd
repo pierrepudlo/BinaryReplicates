@@ -14,7 +14,7 @@ bayesian_scoring(ni, si, fit)
 bayesian_prevalence_estimate(fit)
 }
 \arguments{
-\item{fit}{The \code{stanfit} object return by \link{BayesianFit}}
+\item{fit}{The \code{stanfit} object returned by \link{BayesianFit}}
 
 \item{level}{Posterior probability of the credible intervals}
 

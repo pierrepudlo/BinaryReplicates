@@ -55,7 +55,8 @@ median_scoring <- function(ni, si) {
   if (length(ni) != length(si)) {
     stop("ni and si must have the same length")
   }
-  ifelse(si == ni / 2, 0.5, ifelse(si > ni / 2, 1, 0))
+  # Use 2*si == ni for exact integer comparison (avoids float issues)
+  ifelse(2 * si == ni, 0.5, ifelse(2 * si > ni, 1, 0))
 }
 
 
@@ -75,8 +76,13 @@ likelihood_scoring <- function(ni, si, param) {
   theta <- param$theta
   p <- param$p
   q <- param$q
-  theta * dbinom(si, ni, 1 - q) /
-    (theta * dbinom(si, ni, 1 - q) + (1 - theta) * dbinom(si, ni, p))
+  # Use log-space computation to avoid division by zero and underflow
+  log_numer <- log(theta) + dbinom(si, ni, 1 - q, log = TRUE)
+  log_denom_term2 <- log(1 - theta) + dbinom(si, ni, p, log = TRUE)
+  # Symmetric log-sum-exp trick for numerical stability
+  max_log <- pmax(log_numer, log_denom_term2)
+  log_denom <- max_log + log1p(exp(-abs(log_denom_term2 - log_numer)))
+  exp(log_numer - log_denom)
 }
 
 #' @rdname non_bayesian_scoring

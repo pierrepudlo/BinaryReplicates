@@ -5,35 +5,35 @@
 \title{Compute the \emph{Maximum-A-Posteriori} estimate with the EM algorithm}
 \usage{
 EMFit(
-  si,
   ni,
+  si,
   ti = NULL,
-  prior = list(a_FP = 1, b_FP = 1, a_FN = 1, b_FN = 1),
+  prior = list(a_FP = 2, b_FP = 2, a_FN = 2, b_FN = 2),
   N_init = 20,
   maxIter = 1000,
   errorMin = 1e-07
 )
 }
 \arguments{
-\item{si}{Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual}
-
 \item{ni}{Numeric vector of \eqn{n_i}'s, the total numbers of replicates for each individual}
 
-\item{ti}{Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual
-If \code{NULL}, the EM algorithm is used to estimate the parameters. Default to \code{NULL}. See details}
+\item{si}{Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual}
+
+\item{ti}{Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual.
+If \code{NULL}, the EM algorithm is used to estimate the parameters. Defaults to \code{NULL}. See details.}
 
 \item{prior}{A list of prior parameters for the model. The prior distribution is as follows:
 
 \itemize{
-\item The false positivity rate: \eqn{p \sim \text{Beta}(a_{FP}, b_{FP})}
-\item The false negativity rate: \eqn{q \sim \text{Beta}(a_{FN}, b_{FN})}
+\item The false positive rate: \eqn{p \sim \text{Beta}(a_{FP}, b_{FP})}
+\item The false negative rate: \eqn{q \sim \text{Beta}(a_{FN}, b_{FN})}
 }}
 
-\item{N_init}{The number of initializations if \code{ti} is not provided. Default to 20}
+\item{N_init}{The number of initializations if \code{ti} is not provided. Defaults to 20.}
 
-\item{maxIter}{The maximum number of iterations if EM algorithm is used. Default to 1e3}
+\item{maxIter}{The maximum number of iterations if the EM algorithm is used. Defaults to 1e3.}
 
-\item{errorMin}{The minimum error computed if EM algorithm is used. Default to 1e-7}
+\item{errorMin}{The minimum error for convergence if the EM algorithm is used. Defaults to 1e-7.}
 }
 \value{
 A list with the following components:
@@ -59,9 +59,9 @@ estimate the parameters.}
 \examples{
 data("periodontal")
 # Get ML estimate knowing the true values of the latent ti's
-periodontal_ml <- EMFit(periodontal$si,periodontal$ni,periodontal$ti)
+periodontal_ml <- EMFit(periodontal$ni, periodontal$si, periodontal$ti)
 # Get MAP estimate without knowing the true values of the latent ti's
-periodontal_EM <- EMFit(periodontal$si,periodontal$ni,ti = NULL)
+periodontal_EM <- EMFit(periodontal$ni, periodontal$si, ti = NULL)
 
 }
 \seealso{

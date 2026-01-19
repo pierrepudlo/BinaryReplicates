@@ -11,7 +11,7 @@ predict_scores(newdata_ni, newdata_si, fit)
 
 \item{newdata_si}{Numeric vector of the numbers of positive replicates per individuals}
 
-\item{fit}{The \code{stanfit} object return by \link{BayesianFit}}
+\item{fit}{The \code{stanfit} object returned by \link{BayesianFit}}
 }
 \value{
 The \code{predict_scores} function returns the predictive Bayesian scores in a numeric vector.
@@ -23,7 +23,7 @@ Compute predictive Bayesian scores
 }
 \details{
 The \code{predict_scores} function computes the predictive Bayesian scores.
-It makes the empirical estimator, for a new individual \eqn{n+1}$, of the following integral:
+It computes the empirical estimator, for a new individual \eqn{n+1}, of the following integral:
 \deqn{Y_{B,n+1} = \int Y_{L,n+1}(\theta_T, p, q) \pi(\theta_T, p, q|S_1,...,S_{n})\text{d}\theta_T\text{d}p\text{d}q}
 where \eqn{\pi(\theta, p, q|S_1,...,S_{n})} is the posterior distribution
 of the parameters \eqn{\theta}, \eqn{p} and \eqn{q} given the data
@@ -39,9 +39,9 @@ posterior distribution, output of the function \link{BayesianFit}. \eqn{K} is th
 data("periodontal")
 theta <- mean(periodontal$ti)
 fitBay <- BayesianFit(periodontal$ni, periodontal$si, chains = 2, iter = 500)
-fitMAP <- EMFit(periodontal$si,periodontal$ni)
+fitMAP <- EMFit(periodontal$ni, periodontal$si)
 
-## Comparaison Bayesian <--> MAP
+## Comparison Bayesian <--> MAP
 ni <- 200
 Ni <- rep(ni,ni+1)
 Si <- 0:ni

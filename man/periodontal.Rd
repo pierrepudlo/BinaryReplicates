@@ -9,14 +9,14 @@ A data frame with 50 rows and 3 variables:
 \describe{
 \item{ni}{Total numbers of sites tested for each individual}
 \item{si}{Number of positive tests for each individual}
-\item{ti}{Status of the individual (1=infected, 0=non infected)}
+\item{ti}{Status of the individual (1=infected, 0=non-infected)}
 }
 }
 \usage{
 data(periodontal)
 }
 \description{
-Data from enzymatic diagnostic tests to detect to two organisms
+Data from enzymatic diagnostic tests to detect two organisms
 Treponema denticola and Bacteroides gingivalis.
 }
 \examples{

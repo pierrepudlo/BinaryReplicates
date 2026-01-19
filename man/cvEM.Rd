@@ -2,7 +2,7 @@
 % Please edit documentation in R/EMFit.R
 \name{cvEM}
 \alias{cvEM}
-\title{Function to perform cross-validation in the EM algorithm}
+\title{Cross-validation for the EM algorithm}
 \usage{
 cvEM(
   ni,
@@ -12,7 +12,7 @@ cvEM(
   N_init = 20,
   maxIter = 1000,
   errorMin = 1e-07,
-  prior = list(a_FP = 1, b_FP = 1, a_FN = 1, b_FN = 1)
+  prior = list(a_FP = 2, b_FP = 2, a_FN = 2, b_FN = 2)
 )
 }
 \arguments{
@@ -20,18 +20,18 @@ cvEM(
 
 \item{si}{Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual}
 
-\item{ti}{Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual
-If \code{NULL}, the EM algorithm is used to estimate the parameters. Default to \code{NULL}. See details}
+\item{ti}{Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual.
+If \code{NULL}, the EM algorithm is used to estimate the parameters. Defaults to \code{NULL}. See details.}
 
-\item{N_cv}{The number of folds. Default to 20}
+\item{N_cv}{The number of folds. Defaults to 20.}
 
-\item{N_init}{The number of initializations if \code{ti} is not provided. Default to 20 if  observations otherwise default to the number of observations, corresponding to leave-one-out cross-validation.}
+\item{N_init}{The number of initializations if \code{ti} is not provided. Defaults to 20.}
 
-\item{maxIter}{The maximum number of iterations if EM algorithm is used. Default to 1e3}
+\item{maxIter}{The maximum number of iterations if the EM algorithm is used. Defaults to 1e3.}
 
-\item{errorMin}{The minimum error computed if EM algorithm is used. Default to 1e-7}
+\item{errorMin}{The minimum error for convergence if the EM algorithm is used. Defaults to 1e-7.}
 
-\item{prior}{A list of prior parameters for the model. The prior distribution is as follows:}
+\item{prior}{A list of prior parameters for the model.}
 }
 \value{
 A list with the following components:
@@ -41,7 +41,7 @@ A list with the following components:
 }
 }
 \description{
-Function to perform cross-validation in the EM algorithm
+Cross-validation for the EM algorithm
 }
 \details{
 This function chooses its algorithm according to what is provided in the \code{ti} argument:
@@ -56,7 +56,7 @@ estimate the parameters.}
 }
 \examples{
 data("periodontal")
-modelCV <- cvEM(periodontal$ni,periodontal$si)
+modelCV <- cvEM(periodontal$ni, periodontal$si)
 
 }
 \seealso{

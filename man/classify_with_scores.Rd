@@ -15,7 +15,7 @@ classify_with_scores(scores, vL, vU)
 \item{vU}{The upper threshold}
 }
 \value{
-A numeric vector of the classification (where .5 = inconclusive)
+A numeric vector of the classification (where 0.5 = inconclusive)
 }
 \description{
 Classification based on a thresholding of the scores
