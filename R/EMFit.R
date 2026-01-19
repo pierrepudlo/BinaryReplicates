@@ -120,8 +120,9 @@ EMFit <- function(ni, si, ti = NULL,
         log_numer <- log(theta_hat) + (ni - si) * log(q_hat) + si * log(1 - q_hat)
         log_denom_r <- log(1 - theta_hat) + si * log(p_hat) +
                        (ni - si) * log(1 - p_hat)
-        # log_sum_exp trick: log(a + b) = log_a + log(1 + exp(log_b - log_a))
-        log_denom <- log_numer + log1p(exp(log_denom_r - log_numer))
+        # Symmetric log-sum-exp trick for numerical stability
+        log_denom <- pmax(log_numer, log_denom_r) +
+          log1p(exp(-abs(log_denom_r - log_numer)))
         score[id_na] <- exp(log_numer[id_na] - log_denom[id_na])
 
         # M-step: update parameters

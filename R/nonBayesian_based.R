@@ -79,8 +79,9 @@ likelihood_scoring <- function(ni, si, param) {
   # Use log-space computation to avoid division by zero and underflow
   log_numer <- log(theta) + dbinom(si, ni, 1 - q, log = TRUE)
   log_denom_term2 <- log(1 - theta) + dbinom(si, ni, p, log = TRUE)
-  # log_sum_exp trick for numerical stability
-  log_denom <- log_numer + log1p(exp(log_denom_term2 - log_numer))
+  # Symmetric log-sum-exp trick for numerical stability
+  max_log <- pmax(log_numer, log_denom_term2)
+  log_denom <- max_log + log1p(exp(-abs(log_denom_term2 - log_numer)))
   exp(log_numer - log_denom)
 }
 

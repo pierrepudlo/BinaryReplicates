@@ -52,7 +52,6 @@ predict_scores <- function(newdata_ni, newdata_si, fit) {
   n_post <- length(post$theta)
 
   # Memory-efficient computation: loop over individuals instead of
-
   # creating a massive data frame with n * n_post rows
   scores <- numeric(n)
   for (i in seq_len(n)) {
@@ -61,7 +60,9 @@ predict_scores <- function(newdata_ni, newdata_si, fit) {
                  dbinom(newdata_si[i], newdata_ni[i], 1 - post$q, log = TRUE)
     log_denom_term2 <- log(1 - post$theta) +
                        dbinom(newdata_si[i], newdata_ni[i], post$p, log = TRUE)
-    log_denom <- log_numer + log1p(exp(log_denom_term2 - log_numer))
+    # Symmetric log-sum-exp trick for numerical stability
+    log_denom <- pmax(log_numer, log_denom_term2) +
+                 log1p(exp(-abs(log_denom_term2 - log_numer)))
     scores[i] <- mean(exp(log_numer - log_denom))
   }
   return(scores)
