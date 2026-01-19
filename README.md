@@ -1,123 +1,208 @@
 # BinaryReplicates
 
-This package implements the methods described in the paper XXX.
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/pierrepudlo/BinaryReplicates/workflows/R-CMD-check/badge.svg)](https://github.com/pierrepudlo/BinaryReplicates/actions)
+<!-- badges: end -->
 
-It provides functions to compute:
+Statistical methods for analyzing **binary replicates**, i.e., noisy binary measurements of latent binary states. This package implements the methods described in:
 
-- average-based scores and classifications
-- median-based scores and classifications
-- likelihood-based scores and classifications
-- Bayesian scores, classifications, and prevalence estimates
+> Royer-Carenzi, M., Lorenzo, H., & Pudlo, P. (in press). Reconciling Binary Replicates: Beyond the Average. *Statistics in Medicine*.
 
+## Overview
 
-## Dependencies
+The package provides scoring functions to estimate the probability that an individual is in the positive state, given noisy replicated measurements:
 
-The package depends on `rstan`, which can be installed by following the guide at:
-https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started
+| Method | Function | Requirements |
+|--------|----------|--------------|
+| Average-based | `average_scoring()` | None |
+| Median-based | `median_scoring()` | None |
+| MAP (EM algorithm) | `MAP_scoring()` | Fitted EM model |
+| Likelihood-based | `likelihood_scoring()` | Known parameters |
+| Bayesian | `bayesian_scoring()` | Fitted Bayesian model |
 
+Additional features:
+- **Classification** with inconclusive decisions (`classify_with_scores()`)
+- **Prevalence estimation** from scores or Bayesian posterior
+- **Credible intervals** for model parameters
+- **Cross-validation** for model assessment (`cvEM()`)
+
+## Statistical Model
+
+For each individual $i$, we observe $n_i$ binary replicates. These are noisy measurements of a true latent state $T_i \in \{0, 1\}$:
+
+$$
+T_i \mid \theta \sim \text{Bernoulli}(\theta)
+$$
+
+$$
+S_i \mid T_i, p, q \sim \text{Binomial}\big(n_i,\; T_i(1-q) + (1-T_i)p\big)
+$$
+
+where:
+- $\theta \in (0, 1)$ is the **prevalence** (probability that $T_i = 1$)
+- $p \in (0, 1/2)$ is the **false positive rate** (probability of observing 1 when $T_i = 0$)
+- $q \in (0, 1/2)$ is the **false negative rate** (probability of observing 0 when $T_i = 1$)
+
+The goal is to estimate the probability $\mathbb{P}(T_i = 1 \mid S_i = s_i)$ for each individual, which is given by:
+
+$$
+\mathbb{P}(T_i = 1 \mid S_i = s_i) = \frac{\theta \cdot (1-q)^{s_i} q^{n_i - s_i}}{\theta \cdot (1-q)^{s_i} q^{n_i - s_i} + (1-\theta) \cdot p^{s_i} (1-p)^{n_i - s_i}}
+$$
 
 ## Installation
 
-After installing the `devtools` package you can install this package with:
+### Prerequisites
 
-```{r}
+The package depends on `rstan` for Bayesian inference. Install it first by following the guide at:
+https://mc-stan.org/install/
+
+### Install from GitHub
+
+```r
+# install.packages("devtools")
 devtools::install_github("pierrepudlo/BinaryReplicates")
 ```
 
-## Usage
+## Quick Start
 
-The function to fit the Bayesian model is `BayesianFit`.
-The following example uses synthetic data generated from the model. 
-First, we generate the synthetic data:
+```r
+library(BinaryReplicates)
 
-```{r}
-theta <- .4
-p <- q <- .22
-n <- 20
+# Load example data
+data("periodontal")
+ni <- periodontal$ni
+si <- periodontal$si
+
+# --- Fast approach: EM algorithm ---
+fit_em <- EMFit(ni, si)
+fit_em$parameters_hat
+scores_MAP <- MAP_scoring(ni, si, fit_em)
+
+# --- Full Bayesian approach ---
+fit_bayes <- BayesianFit(ni, si, chains = 4, iter = 5000)
+scores_Bayes <- bayesian_scoring(ni, si, fit_bayes)
+
+# Classify individuals (0.5 = inconclusive)
+classes_MAP <- classify_with_scores(scores_MAP, vL = 0.4, vU = 0.6)
+classes_Bayes <- classify_with_scores(scores_Bayes, vL = 0.4, vU = 0.6)
+
+# Compare classifications
+table(MAP = classes_MAP, Bayesian = classes_Bayes)
+```
+
+## Usage Examples
+
+### Generate synthetic data
+
+```r
+theta <- 0.4
+p <- q <- 0.22
+n <- 50
 ni <- sample(2:6, n, replace = TRUE)
 ti <- rbinom(n, 1, theta)
-si <- rbinom(n, ni, ti*(1-q) + (1-ti)*p)
-synth_data <- data.frame(ni = ni, si = si, ti=ti)
+si <- rbinom(n, ni, ti * (1 - q) + (1 - ti) * p)
 ```
 
-### Average- and median-based computations
+### Simple scoring methods
 
-Compute average-based scores, classifications, and prevalence estimates:
+These methods require no model fitting:
 
-```{r}
-Y_A <- average_scoring(ni, si) # scoring
-T_A <- classify_with_scores(Y_A, vL = .4, vU = .6) # classify
-theta_A <- prevalence_estimate(Y_A) # prevalence estimate
+```r
+# Average-based scores
+Y_A <- average_scoring(ni, si)
+theta_A <- prevalence_estimate(Y_A)
+
+# Median-based scores
+Y_M <- median_scoring(ni, si)
+theta_M <- prevalence_estimate(Y_M)
 ```
 
-Compute median-based statistics similarly:
+### MAP estimation with the EM algorithm
 
-```{r}
-Y_M <- median_scoring(ni, si) # scoring
-T_M <- classify_with_scores(Y_M, vL = .4, vU = .6) # classify
-theta_M <- prevalence_estimate(Y_M) # prevalence estimate
+The EM algorithm estimates model parameters without full Bayesian inference:
+
+```r
+fit_em <- EMFit(ni, si)
+fit_em$parameters_hat
+
+# MAP scores use the estimated parameters
+Y_MAP <- MAP_scoring(ni, si, fit_em)
+theta_MAP <- prevalence_estimate(Y_MAP)
+
+# Classification with thresholds
+T_MAP <- classify_with_scores(Y_MAP, vL = 0.4, vU = 0.6)
 ```
 
-### Likelihood-based scores and classifications
+### Full Bayesian inference
 
-Likelihood-based computations require known values for the fixed parameters $\theta$, $p$ and $q$. Computing a likelihood-based prevalence estimate is unnecessary because $\theta$ is assumed known. Compute likelihood-based scores and classifications with:
-
-```{r}
-Y_L <- likelihood_scoring(ni, si, theta, p, q) # scorings
-T_L <- classify_with_scores(Y_L, vL = .4, vU = .6) # classifications
-```
-
-### Bayesian scores, classifications, and prevalence estimate
-
-Fit the Bayesian model to the synthetic data:
-
-```{r}
+For full posterior inference, use Stan via `BayesianFit()`:
+```r
+# Fit the Bayesian model (uses Stan MCMC)
 fit <- BayesianFit(ni, si, chains = 4, iter = 5000)
-print(fit)
+print(fit, pars = c("theta", "p", "q"))
+
+# Credible intervals
+credint(fit, level = 0.90)
+
+# Bayesian scores and prevalence
+Y_B <- bayesian_scoring(ni, si, fit)
+theta_B <- bayesian_prevalence_estimate(fit)
+
+# Classification
+T_B <- classify_with_scores(Y_B, vL = 0.4, vU = 0.6)
 ```
 
-If you have sufficient RAM and multiple CPU cores, configure rstan to use them:
-
-```{r}
-options(mc.cores = 4)
+To use multiple CPU cores for faster sampling:
+```r
+options(mc.cores = parallel::detectCores())
 ```
 
-If shinystan is installed, explore the posterior with:
+### Likelihood-based scores (known parameters)
 
-```{r}
-shinystan::launch_shinystan(fit)
+When the true parameters are known (e.g., in simulations):
+
+```r
+Y_L <- likelihood_scoring(ni, si, list(theta = theta, p = p, q = q))
+T_L <- classify_with_scores(Y_L, vL = 0.4, vU = 0.6)
 ```
 
-Obtain 80% credible intervals with:
+### Prediction on new data
 
-```{r}
-credint(fit, level = .8)
+Compute predictive Bayesian scores for new observations:
+
+```r
+new_ni <- rep(10, 11)
+new_si <- 0:10
+new_scores <- predict_scores(new_ni, new_si, fit)
 ```
 
-Compute Bayesian scores, classifications and the prevalence estimate:
+### Cross-validation
 
-```{r}
-Y_B <- bayesian_scoring(ni, si, fit) # scorings
-T_B <- classify_with_scores(Y_B, vL = .4, vU = .6) # classifications
-theta_B <- bayesian_prevalence_estimate(fit) # prevalence estimate
+Assess model performance with cross-validation:
+
+```r
+cv_result <- cvEM(ni, si, N_cv = 10)
+cv_classified <- classify_with_scores_cvEM(cv_result, ti = ti, vL = 0.4)
+cv_classified$risk  # Empirical risk
 ```
 
-### Summary of classifications
+## Documentation
 
-The following summarizes how often each method classifies observations as $0$, $1/2$ or $1$, stratified by the true value of $T$.
+For more details, see the package vignette:
 
-```{r}
-library(tidyverse)
-confusion <- synth_data %>%
-  mutate(
-    Status = ifelse(ti==1, "T=1", "T=0"),
-    Average = T_A, Median = T_M, Likelihood = T_L, Bayesian = T_B) %>%
-  pivot_longer(cols = c(Average, Median, Likelihood, Bayesian), 
-               names_to = "Method", values_to = "Decision") %>%
-  group_by(Status, Method, Decision) %>%
-  summarise(count = n()) %>%
-  ungroup() %>%
-  mutate(count = as.integer(count)) %>%
-  pivot_wider(names_from = Decision, values_from = count, values_fill = 0) 
-confusion
+```r
+vignette("introduction", package = "BinaryReplicates")
 ```
+
+## Citation
+
+If you use this package, please cite:
+
+```
+Royer-Carenzi, M., Lorenzo, H., & Pudlo, P. (in press).
+Reconciling Binary Replicates: Beyond the Average.
+Statistics in Medicine.
+```
+
+## License
+GPL (>= 3)
