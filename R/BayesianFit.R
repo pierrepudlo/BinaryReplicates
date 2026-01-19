@@ -35,7 +35,7 @@ BayesianFit <- function(ni, si,
                                  a_FN=2, b_FN=2,
                                  a_T=.5, b_T=.5),...) {
   # Check the data
-  if (!is.numeric(ni) | !is.numeric(si)) {
+  if (!is.numeric(ni) || !is.numeric(si)) {
     stop("ni and si must be numeric vectors")
   }
   if (length(ni) != length(si)) {

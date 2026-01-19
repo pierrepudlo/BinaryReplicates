@@ -1,58 +1,56 @@
-functions{
+functions {
   // The predictive probability that T_i = 1, given the data and the parameters.
-  real pred(int s, int n, real p, real q, real theta){
-      real numerateur;
-      real denominateur;
-      numerateur = theta * exp(binomial_lpmf(s | n, 1-q));
-      denominateur = numerateur +
-                     (1-theta) * exp(binomial_lpmf(s | n, p));
-    return numerateur / denominateur;
+  real pred(int s, int n, real p, real q, real theta) {
+    real log_num = log(theta) + binomial_lpmf(s | n, 1 - q);
+    real log_denom = log_sum_exp(
+      log_num,
+      log1m(theta) + binomial_lpmf(s | n, p)
+    );
+    return exp(log_num - log_denom);
   }
 }
 
-
 // The data accepted by the model.
 data {
-  int n;
-  int si[n];
-  int ni[n];
-  real a_FP;
-  real b_FP;
-  real a_FN;
-  real b_FN;
-  real a_T;
-  real b_T;
+  int<lower=1> n;
+  array[n] int<lower=0> si;
+  array[n] int<lower=1> ni;
+  real<lower=0> a_FP;
+  real<lower=0> b_FP;
+  real<lower=0> a_FN;
+  real<lower=0> b_FN;
+  real<lower=0> a_T;
+  real<lower=0> b_T;
 }
 
 // The parameters accepted by the model.
 parameters {
-  real<lower=0, upper=.5> p;
-  real<lower=0, upper=.5> q;
+  real<lower=0, upper=0.5> p;
+  real<lower=0, upper=0.5> q;
   real<lower=0, upper=1> theta;
 }
 
 // The model to be estimated.
-//
 model {
   p ~ beta(a_FP, b_FP);
   q ~ beta(a_FN, b_FN);
   theta ~ beta(a_T, b_T);
-  //target += 2*beta_lpdf(2*p | a_FP, b_FP);
-  //target += 2*beta_lpdf(2*q | a_FN, b_FN);
-  //target += beta_lpdf(theta | a_T, b_T);
-  for(i in 1:n){
-    target += log(theta * exp(binomial_lpmf(si[i] | ni[i], 1-q)) +
-              (1-theta) * exp(binomial_lpmf(si[i] | ni[i], p)));
+
+  for (i in 1:n) {
+    target += log_sum_exp(
+      log(theta) + binomial_lpmf(si[i] | ni[i], 1 - q),
+      log1m(theta) + binomial_lpmf(si[i] | ni[i], p)
+    );
   }
 }
 
 // Output
 generated quantities {
-  int Ti[n];
-  real pi[n];
-  for(i in 1:n){
-    pi[i] = pred(si[i], ni[i], p, q, theta);
-    Ti[i] = bernoulli_rng(pi[i]);
+  array[n] int Ti;
+  array[n] real posterior_prob;
+
+  for (i in 1:n) {
+    posterior_prob[i] = pred(si[i], ni[i], p, q, theta);
+    Ti[i] = bernoulli_rng(posterior_prob[i]);
   }
 }
-

@@ -59,7 +59,7 @@ credint <- function(fit, level = .9) {
 #' @export
 bayesian_scoring <- function(ni, si, fit){
   # Extract the latent variable
-  pi <- rstan::extract(fit, pars = "pi")$pi
+  pi <- rstan::extract(fit, pars = "posterior_prob")$posterior_prob
   # Compute the posterior probability
   yi <- colMeans(pi)
   # Pairs (ni, si) that are equal should have the same posterior probability

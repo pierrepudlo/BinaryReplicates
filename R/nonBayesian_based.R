@@ -10,9 +10,9 @@
 #' @param fit The object returned by [EMFit] containing the results of the EM algorithm
 #' @return A numeric vector of the scores
 #'
-#' @note For likelihood based scores, the values of \eqn{\theta}, \eqn{p} and
-#' \eqn{q} are required. Consequently likelihood scoring is not reachable in
-#' practice.
+#' @note For likelihood-based scores, the values of \eqn{\theta}, \eqn{p} and
+#' \eqn{q} are required. Consequently, likelihood scoring is not directly applicable
+#' in practice without parameter estimates.
 #'
 #' @examples
 #' data("periodontal")
@@ -22,16 +22,22 @@
 #' # p and q which can be estimated in this example as follows:
 #' theta_hat <- mean(periodontal$ti)
 #' cat("The prevalence in the data is ", theta_hat, "\n")
-#' p_hat <- with(periodontal, sum(si[ti==0])/sum(ni[ti==0]))
-#' q_hat <- with(periodontal, 1 - sum(si[ti==1])/sum(ni[ti==1]))
+#' p_hat <- with(periodontal, sum(si[ti == 0]) / sum(ni[ti == 0]))
+#' q_hat <- with(periodontal, 1 - sum(si[ti == 1]) / sum(ni[ti == 1]))
 #' Y_L <- likelihood_scoring(periodontal$ni, periodontal$si,
-#'                           list(theta=theta_hat, p=p_hat, q=q_hat))
+#'                           list(theta = theta_hat, p = p_hat, q = q_hat))
 #'
 #' @name non_bayesian_scoring
 #'
 #' @rdname non_bayesian_scoring
 #' @export
 average_scoring <- function(ni, si) {
+  if (!is.numeric(ni) || !is.numeric(si)) {
+    stop("ni and si must be numeric vectors")
+  }
+  if (length(ni) != length(si)) {
+    stop("ni and si must have the same length")
+  }
   si / ni
 }
 
@@ -43,7 +49,13 @@ average_scoring <- function(ni, si) {
 #'
 #' @export
 median_scoring <- function(ni, si) {
-  ifelse(si == ni/2, .5, ifelse(si > ni/2, 1, 0))
+  if (!is.numeric(ni) || !is.numeric(si)) {
+    stop("ni and si must be numeric vectors")
+  }
+  if (length(ni) != length(si)) {
+    stop("ni and si must have the same length")
+  }
+  ifelse(si == ni / 2, 0.5, ifelse(si > ni / 2, 1, 0))
 }
 
 
@@ -51,11 +63,20 @@ median_scoring <- function(ni, si) {
 #' @importFrom stats dbinom
 #' @export
 likelihood_scoring <- function(ni, si, param) {
+  if (!is.numeric(ni) || !is.numeric(si)) {
+    stop("ni and si must be numeric vectors")
+  }
+  if (length(ni) != length(si)) {
+    stop("ni and si must have the same length")
+  }
+  if (!is.list(param) || !all(c("theta", "p", "q") %in% names(param))) {
+    stop("param must be a list with entries 'theta', 'p', and 'q'")
+  }
   theta <- param$theta
   p <- param$p
   q <- param$q
-  theta*dbinom(si, ni, 1-q) /
-    (theta*dbinom(si, ni, 1-q) + (1-theta)*dbinom(si, ni, p))
+  theta * dbinom(si, ni, 1 - q) /
+    (theta * dbinom(si, ni, 1 - q) + (1 - theta) * dbinom(si, ni, p))
 }
 
 #' @rdname non_bayesian_scoring
@@ -63,11 +84,14 @@ likelihood_scoring <- function(ni, si, param) {
 #'
 #' @examples
 #' data("periodontal")
-#' fit <- EMFit(periodontal$si,periodontal$ni)
-#' Y_MAP <- MAP_scoring(periodontal$ni, periodontal$si,fit)
+#' fit <- EMFit(periodontal$ni, periodontal$si)
+#' Y_MAP <- MAP_scoring(periodontal$ni, periodontal$si, fit)
 #'
 #' @seealso [EMFit]
 MAP_scoring <- function(ni, si, fit) {
+  if (!is.list(fit) || !"parameters_hat" %in% names(fit)) {
+    stop("fit must be a list with a 'parameters_hat' component")
+  }
   likelihood_scoring(ni, si, fit$parameters_hat)
 }
 
@@ -77,7 +101,7 @@ MAP_scoring <- function(ni, si, fit) {
 #'               [average_scoring], [median_scoring], [MAP_scoring] or [bayesian_scoring]
 #' @param vL The lower threshold
 #' @param vU The upper threshold
-#' @return A numeric vector of the classification (where .5 = inconclusive)
+#' @return A numeric vector of the classification (where 0.5 = inconclusive)
 #'
 #' @details Each decision \eqn{\hat{t}_i} is taken according to the following rule:
 #' \deqn{
@@ -91,7 +115,10 @@ MAP_scoring <- function(ni, si, fit) {
 #'
 #' @export
 classify_with_scores <- function(scores, vL, vU) {
-  ifelse(scores < vL, 0, ifelse(scores > vU, 1, .5))
+  if (!is.numeric(scores)) {
+    stop("scores must be a numeric vector")
+  }
+  ifelse(scores < vL, 0, ifelse(scores > vU, 1, 0.5))
 }
 
 #' Compute the average-/median- or MAP-based prevalence estimates based on the scores
@@ -102,15 +129,15 @@ classify_with_scores <- function(scores, vL, vU) {
 #'
 #' @note We have shown that the median-based prevalence estimator is better
 #' than the average-based prevalence estimator in terms of bias, except when
-#' the prevalence is in an interval \eqn{J}. And the length of \eqn{J} is small when the
-#'  number of replicates is always large.
+#' the prevalence is in an interval \eqn{J}. The length of \eqn{J} is small when the
+#' number of replicates is always large.
 #'
 #' @examples
 #' data("periodontal")
 #' theta <- mean(periodontal$ti)
 #' Y_A <- average_scoring(periodontal$ni, periodontal$si)
 #' Y_M <- median_scoring(periodontal$ni, periodontal$si)
-#' fit <- EMFit(periodontal$si,periodontal$ni)
+#' fit <- EMFit(periodontal$ni, periodontal$si)
 #' Y_MAP <- MAP_scoring(periodontal$ni, periodontal$si, fit)
 #' hat_theta_A <- prevalence_estimate(Y_A)
 #' hat_theta_M <- prevalence_estimate(Y_M)
@@ -122,5 +149,8 @@ classify_with_scores <- function(scores, vL, vU) {
 #'
 #' @export
 prevalence_estimate <- function(scores) {
+  if (!is.numeric(scores)) {
+    stop("scores must be a numeric vector")
+  }
   mean(scores)
 }

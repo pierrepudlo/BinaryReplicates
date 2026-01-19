@@ -28,7 +28,7 @@
 #' data("periodontal")
 #' theta <- mean(periodontal$ti)
 #' fitBay <- BayesianFit(periodontal$ni, periodontal$si, chains = 2, iter = 500)
-#' fitMAP <- EMFit(periodontal$si,periodontal$ni)
+#' fitMAP <- EMFit(periodontal$ni, periodontal$si)
 #'
 #' ## Comparison Bayesian <--> MAP
 #' ni <- 200
