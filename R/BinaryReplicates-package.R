@@ -12,8 +12,8 @@
 #' @importFrom RcppParallel RcppParallelLibs
 #'
 #' @references
-#' Royer-Carenzi, M., Lorenzo, H., & Pudlo, P. (2026). Reconciling Binary
-#' Replicates: Beyond the Average. To appear in \emph{Statistics in Medicine}.
+#' Royer-Carenzi, M., Lorenzo, H., & Pudlo, P. (in press). Reconciling Binary
+#' Replicates: Beyond the Average. \emph{Statistics in Medicine}.
 #'
 ## usethis namespace: end
 NULL

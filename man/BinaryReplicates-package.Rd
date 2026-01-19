@@ -9,8 +9,8 @@
 Statistical methods for analyzing binary replicates, which are noisy binary measurements of latent binary states. Provides scoring functions (average, median, likelihood-based, and Bayesian) to estimate the probability that an individual is in the positive state. Includes maximum a posteriori estimation via the EM algorithm and full Bayesian inference via Stan. Supports classification with inconclusive decisions and prevalence estimation.
 }
 \references{
-Royer-Carenzi, M., Lorenzo, H., & Pudlo, P. (2026). Reconciling Binary
-Replicates: Beyond the Average. To appear in \emph{Statistics in Medicine}.
+Royer-Carenzi, M., Lorenzo, H., & Pudlo, P. (in press). Reconciling Binary
+Replicates: Beyond the Average. \emph{Statistics in Medicine}.
 }
 \seealso{
 Useful links:
