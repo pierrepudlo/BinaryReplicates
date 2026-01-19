@@ -2,21 +2,19 @@
 % Please edit documentation in R/EMFit.R
 \name{classify_with_scores_cvEM}
 \alias{classify_with_scores_cvEM}
-\title{Perform classification on the scores for each fold of a cvEM object.
-Note that if \eqn{t_i} is provided, the empirical risk is estimated with
-\eqn{a=v_L}.}
+\title{Perform classification on the scores for each fold of a cvEM object}
 \usage{
 classify_with_scores_cvEM(object, ti = NULL, vL = 0.5, vU = 0.5)
 }
 \arguments{
 \item{object}{An object of class cvEM}
 
-\item{ti}{Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual
-If \code{NULL}, the EM algorithm is used to estimate the parameters. Default to \code{NULL}. See details}
+\item{ti}{Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual.
+If \code{NULL}, the risk is not computed. Defaults to \code{NULL}.}
 
-\item{vL}{The lower threshold for classification. Default to 0.5}
+\item{vL}{The lower threshold for classification. Defaults to 0.5.}
 
-\item{vU}{The upper threshold for classification. Default to 0.5}
+\item{vU}{The upper threshold for classification. Defaults to 0.5.}
 }
 \value{
 A cvEM object with the following components:
@@ -26,12 +24,11 @@ A cvEM object with the following components:
 }
 }
 \description{
-Perform classification on the scores for each fold of a cvEM object.
 Note that if \eqn{t_i} is provided, the empirical risk is estimated with
 \eqn{a=v_L}.
 }
 \examples{
 data(periodontal)
-modelCV <- cvEM(periodontal$ni,periodontal$si)
-modelCV2 <- classify_with_scores_cvEM(modelCV,vL=0.4)
+modelCV <- cvEM(periodontal$ni, periodontal$si)
+modelCV2 <- classify_with_scores_cvEM(modelCV, vL = 0.4)
 }

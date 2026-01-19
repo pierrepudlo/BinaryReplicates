@@ -6,10 +6,19 @@
 \alias{BinaryReplicates}
 \title{BinaryReplicates: Dealing with Binary Replicates}
 \description{
-What the package does (one paragraph).
+Statistical methods for analyzing binary replicates, which are noisy binary measurements of latent binary states. Provides scoring functions (average, median, likelihood-based, and Bayesian) to estimate the probability that an individual is in the positive state. Includes maximum a posteriori estimation via the EM algorithm and full Bayesian inference via Stan. Supports classification with inconclusive decisions and prevalence estimation.
 }
 \references{
-Manuela Carenzi-Royer, Hadrien Lorenzo and Pierre Pudlo, Aix-Marseille Université.
+Royer-Carenzi, M., Lorenzo, H., & Pudlo, P. (2026). Reconciling Binary
+Replicates: Beyond the Average. To appear in \emph{Statistics in Medicine}.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/pierrepudlo/BinaryReplicates}
+  \item Report bugs at \url{https://github.com/pierrepudlo/BinaryReplicates/issues}
+}
+
 }
 \author{
 \strong{Maintainer}: Pierre Pudlo \email{pierre.pudlo@univ-amu.fr} (\href{https://orcid.org/0000-0003-0995-716X}{ORCID})

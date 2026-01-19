@@ -27,42 +27,44 @@ namespace model_BayesianModel_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 35> locations_array__ =
+static constexpr std::array<const char*, 37> locations_array__ =
   {" (found before start of program)",
-  " (in 'BayesianModel', line 26, column 2 to column 28)",
-  " (in 'BayesianModel', line 27, column 2 to column 28)",
+  " (in 'BayesianModel', line 26, column 2 to column 29)",
+  " (in 'BayesianModel', line 27, column 2 to column 29)",
   " (in 'BayesianModel', line 28, column 2 to column 31)",
-  " (in 'BayesianModel', line 46, column 2 to column 12)",
-  " (in 'BayesianModel', line 47, column 2 to column 13)",
-  " (in 'BayesianModel', line 49, column 4 to column 44)",
-  " (in 'BayesianModel', line 50, column 4 to column 33)",
-  " (in 'BayesianModel', line 48, column 15 to line 51, column 3)",
-  " (in 'BayesianModel', line 48, column 2 to line 51, column 3)",
-  " (in 'BayesianModel', line 33, column 2 to column 23)",
-  " (in 'BayesianModel', line 34, column 2 to column 23)",
-  " (in 'BayesianModel', line 35, column 2 to column 25)",
-  " (in 'BayesianModel', line 40, column 4 to line 41, column 64)",
-  " (in 'BayesianModel', line 39, column 15 to line 42, column 3)",
-  " (in 'BayesianModel', line 39, column 2 to line 42, column 3)",
-  " (in 'BayesianModel', line 14, column 2 to column 8)",
-  " (in 'BayesianModel', line 15, column 9 to column 10)",
-  " (in 'BayesianModel', line 15, column 2 to column 12)",
-  " (in 'BayesianModel', line 16, column 9 to column 10)",
-  " (in 'BayesianModel', line 16, column 2 to column 12)",
-  " (in 'BayesianModel', line 17, column 2 to column 12)",
-  " (in 'BayesianModel', line 18, column 2 to column 12)",
-  " (in 'BayesianModel', line 19, column 2 to column 12)",
-  " (in 'BayesianModel', line 20, column 2 to column 12)",
-  " (in 'BayesianModel', line 21, column 2 to column 11)",
-  " (in 'BayesianModel', line 22, column 2 to column 11)",
-  " (in 'BayesianModel', line 46, column 9 to column 10)",
-  " (in 'BayesianModel', line 47, column 10 to column 11)",
-  " (in 'BayesianModel', line 4, column 6 to column 22)",
-  " (in 'BayesianModel', line 5, column 6 to column 24)",
-  " (in 'BayesianModel', line 6, column 6 to column 58)",
-  " (in 'BayesianModel', line 7, column 6 to line 8, column 62)",
-  " (in 'BayesianModel', line 9, column 4 to column 37)",
-  " (in 'BayesianModel', line 3, column 53 to line 10, column 3)"};
+  " (in 'BayesianModel', line 44, column 2 to column 18)",
+  " (in 'BayesianModel', line 45, column 2 to column 31)",
+  " (in 'BayesianModel', line 47, column 4 to column 56)",
+  " (in 'BayesianModel', line 48, column 4 to column 45)",
+  " (in 'BayesianModel', line 46, column 17 to line 49, column 3)",
+  " (in 'BayesianModel', line 46, column 2 to line 49, column 3)",
+  " (in 'BayesianModel', line 32, column 2 to column 33)",
+  " (in 'BayesianModel', line 32, column 28 to column 31)",
+  " (in 'BayesianModel', line 32, column 25 to column 26)",
+  " (in 'BayesianModel', line 33, column 2 to column 33)",
+  " (in 'BayesianModel', line 33, column 28 to column 31)",
+  " (in 'BayesianModel', line 33, column 25 to column 26)",
+  " (in 'BayesianModel', line 34, column 2 to column 25)",
+  " (in 'BayesianModel', line 36, column 4 to line 39, column 6)",
+  " (in 'BayesianModel', line 35, column 17 to line 40, column 3)",
+  " (in 'BayesianModel', line 35, column 2 to line 40, column 3)",
+  " (in 'BayesianModel', line 14, column 2 to column 17)",
+  " (in 'BayesianModel', line 15, column 8 to column 9)",
+  " (in 'BayesianModel', line 15, column 2 to column 27)",
+  " (in 'BayesianModel', line 16, column 8 to column 9)",
+  " (in 'BayesianModel', line 16, column 2 to column 27)",
+  " (in 'BayesianModel', line 17, column 2 to column 21)",
+  " (in 'BayesianModel', line 18, column 2 to column 21)",
+  " (in 'BayesianModel', line 19, column 2 to column 21)",
+  " (in 'BayesianModel', line 20, column 2 to column 21)",
+  " (in 'BayesianModel', line 21, column 2 to column 20)",
+  " (in 'BayesianModel', line 22, column 2 to column 20)",
+  " (in 'BayesianModel', line 44, column 8 to column 9)",
+  " (in 'BayesianModel', line 45, column 8 to column 9)",
+  " (in 'BayesianModel', line 4, column 4 to column 60)",
+  " (in 'BayesianModel', line 5, column 4 to line 8, column 6)",
+  " (in 'BayesianModel', line 9, column 4 to column 36)",
+  " (in 'BayesianModel', line 3, column 54 to line 10, column 3)"};
 template <typename T2__, typename T3__, typename T4__,
           stan::require_all_t<stan::is_stan_scalar<T2__>,
                               stan::is_stan_scalar<T3__>,
@@ -86,16 +88,16 @@ pred(const int& s, const int& n, const T2__& p, const T3__& q, const T4__&
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    local_scalar_t__ numerateur = DUMMY_VAR__;
-    local_scalar_t__ denominateur = DUMMY_VAR__;
-    current_statement__ = 31;
-    numerateur = (theta *
-      stan::math::exp(stan::math::binomial_lpmf<false>(s, n, (1 - q))));
-    current_statement__ = 32;
-    denominateur = (numerateur + ((1 - theta) *
-      stan::math::exp(stan::math::binomial_lpmf<false>(s, n, p))));
+    local_scalar_t__ log_num = DUMMY_VAR__;
     current_statement__ = 33;
-    return (numerateur / denominateur);
+    log_num = (stan::math::log(theta) +
+      stan::math::binomial_lpmf<false>(s, n, (1 - q)));
+    local_scalar_t__ log_denom = DUMMY_VAR__;
+    current_statement__ = 34;
+    log_denom = stan::math::log_sum_exp(log_num, (stan::math::log1m(theta) +
+                  stan::math::binomial_lpmf<false>(s, n, p)));
+    current_statement__ = 35;
+    return stan::math::exp((log_num - log_denom));
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
   }
@@ -133,68 +135,86 @@ public:
     try {
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      current_statement__ = 16;
+      current_statement__ = 20;
       context__.validate_dims("data initialization", "n", "int",
         std::vector<size_t>{});
       n = std::numeric_limits<int>::min();
-      current_statement__ = 16;
+      current_statement__ = 20;
       n = context__.vals_i("n")[(1 - 1)];
-      current_statement__ = 17;
+      current_statement__ = 20;
+      stan::math::check_greater_or_equal(function__, "n", n, 1);
+      current_statement__ = 21;
       stan::math::validate_non_negative_index("si", "n", n);
-      current_statement__ = 18;
+      current_statement__ = 22;
       context__.validate_dims("data initialization", "si", "int",
         std::vector<size_t>{static_cast<size_t>(n)});
       si = std::vector<int>(n, std::numeric_limits<int>::min());
-      current_statement__ = 18;
+      current_statement__ = 22;
       si = context__.vals_i("si");
-      current_statement__ = 19;
+      current_statement__ = 22;
+      stan::math::check_greater_or_equal(function__, "si", si, 0);
+      current_statement__ = 23;
       stan::math::validate_non_negative_index("ni", "n", n);
-      current_statement__ = 20;
+      current_statement__ = 24;
       context__.validate_dims("data initialization", "ni", "int",
         std::vector<size_t>{static_cast<size_t>(n)});
       ni = std::vector<int>(n, std::numeric_limits<int>::min());
-      current_statement__ = 20;
+      current_statement__ = 24;
       ni = context__.vals_i("ni");
-      current_statement__ = 21;
+      current_statement__ = 24;
+      stan::math::check_greater_or_equal(function__, "ni", ni, 1);
+      current_statement__ = 25;
       context__.validate_dims("data initialization", "a_FP", "double",
         std::vector<size_t>{});
       a_FP = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 21;
+      current_statement__ = 25;
       a_FP = context__.vals_r("a_FP")[(1 - 1)];
-      current_statement__ = 22;
+      current_statement__ = 25;
+      stan::math::check_greater_or_equal(function__, "a_FP", a_FP, 0);
+      current_statement__ = 26;
       context__.validate_dims("data initialization", "b_FP", "double",
         std::vector<size_t>{});
       b_FP = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 22;
+      current_statement__ = 26;
       b_FP = context__.vals_r("b_FP")[(1 - 1)];
-      current_statement__ = 23;
+      current_statement__ = 26;
+      stan::math::check_greater_or_equal(function__, "b_FP", b_FP, 0);
+      current_statement__ = 27;
       context__.validate_dims("data initialization", "a_FN", "double",
         std::vector<size_t>{});
       a_FN = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 23;
+      current_statement__ = 27;
       a_FN = context__.vals_r("a_FN")[(1 - 1)];
-      current_statement__ = 24;
+      current_statement__ = 27;
+      stan::math::check_greater_or_equal(function__, "a_FN", a_FN, 0);
+      current_statement__ = 28;
       context__.validate_dims("data initialization", "b_FN", "double",
         std::vector<size_t>{});
       b_FN = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 24;
+      current_statement__ = 28;
       b_FN = context__.vals_r("b_FN")[(1 - 1)];
-      current_statement__ = 25;
+      current_statement__ = 28;
+      stan::math::check_greater_or_equal(function__, "b_FN", b_FN, 0);
+      current_statement__ = 29;
       context__.validate_dims("data initialization", "a_T", "double",
         std::vector<size_t>{});
       a_T = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 25;
+      current_statement__ = 29;
       a_T = context__.vals_r("a_T")[(1 - 1)];
-      current_statement__ = 26;
+      current_statement__ = 29;
+      stan::math::check_greater_or_equal(function__, "a_T", a_T, 0);
+      current_statement__ = 30;
       context__.validate_dims("data initialization", "b_T", "double",
         std::vector<size_t>{});
       b_T = std::numeric_limits<double>::quiet_NaN();
-      current_statement__ = 26;
+      current_statement__ = 30;
       b_T = context__.vals_r("b_T")[(1 - 1)];
-      current_statement__ = 27;
+      current_statement__ = 30;
+      stan::math::check_greater_or_equal(function__, "b_T", b_T, 0);
+      current_statement__ = 31;
       stan::math::validate_non_negative_index("Ti", "n", n);
-      current_statement__ = 28;
-      stan::math::validate_non_negative_index("pi", "n", n);
+      current_statement__ = 32;
+      stan::math::validate_non_negative_index("posterior_prob", "n", n);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -230,11 +250,11 @@ public:
       local_scalar_t__ p = DUMMY_VAR__;
       current_statement__ = 1;
       p = in__.template read_constrain_lub<local_scalar_t__, jacobian__>(0,
-            .5, lp__);
+            0.5, lp__);
       local_scalar_t__ q = DUMMY_VAR__;
       current_statement__ = 2;
       q = in__.template read_constrain_lub<local_scalar_t__, jacobian__>(0,
-            .5, lp__);
+            0.5, lp__);
       local_scalar_t__ theta = DUMMY_VAR__;
       current_statement__ = 3;
       theta = in__.template read_constrain_lub<local_scalar_t__,
@@ -242,27 +262,57 @@ public:
       {
         current_statement__ = 10;
         lp_accum__.add(stan::math::beta_lpdf<propto__>(p, a_FP, b_FP));
-        current_statement__ = 11;
-        lp_accum__.add(stan::math::beta_lpdf<propto__>(q, a_FN, b_FN));
         current_statement__ = 12;
-        lp_accum__.add(stan::math::beta_lpdf<propto__>(theta, a_T, b_T));
+        if (stan::math::logical_lt(p, 0)) {
+          current_statement__ = 12;
+          lp_accum__.add(stan::math::negative_infinity());
+        } else {
+          current_statement__ = 11;
+          if (stan::math::logical_gt(p, 0.5)) {
+            current_statement__ = 11;
+            lp_accum__.add(stan::math::negative_infinity());
+          } else {
+            current_statement__ = 11;
+            lp_accum__.add(-stan::math::log_diff_exp(
+                              stan::math::beta_lcdf(0.5, a_FP, b_FP),
+                              stan::math::beta_lcdf(0, a_FP, b_FP)));
+          }
+        }
+        current_statement__ = 13;
+        lp_accum__.add(stan::math::beta_lpdf<propto__>(q, a_FN, b_FN));
         current_statement__ = 15;
+        if (stan::math::logical_lt(q, 0)) {
+          current_statement__ = 15;
+          lp_accum__.add(stan::math::negative_infinity());
+        } else {
+          current_statement__ = 14;
+          if (stan::math::logical_gt(q, 0.5)) {
+            current_statement__ = 14;
+            lp_accum__.add(stan::math::negative_infinity());
+          } else {
+            current_statement__ = 14;
+            lp_accum__.add(-stan::math::log_diff_exp(
+                              stan::math::beta_lcdf(0.5, a_FN, b_FN),
+                              stan::math::beta_lcdf(0, a_FN, b_FN)));
+          }
+        }
+        current_statement__ = 16;
+        lp_accum__.add(stan::math::beta_lpdf<propto__>(theta, a_T, b_T));
+        current_statement__ = 19;
         for (int i = 1; i <= n; ++i) {
-          current_statement__ = 13;
-          lp_accum__.add(stan::math::log(((theta *
-                           stan::math::exp(
-                             stan::math::binomial_lpmf<false>(
-                               stan::model::rvalue(si, "si",
-                                 stan::model::index_uni(i)),
-                               stan::model::rvalue(ni, "ni",
-                                 stan::model::index_uni(i)), (1 - q)))) + ((1
-                           - theta) *
-                           stan::math::exp(
-                             stan::math::binomial_lpmf<false>(
-                               stan::model::rvalue(si, "si",
-                                 stan::model::index_uni(i)),
-                               stan::model::rvalue(ni, "ni",
-                                 stan::model::index_uni(i)), p))))));
+          current_statement__ = 17;
+          lp_accum__.add(stan::math::log_sum_exp((stan::math::log(theta) +
+                           stan::math::binomial_lpmf<false>(
+                             stan::model::rvalue(si, "si",
+                               stan::model::index_uni(i)),
+                             stan::model::rvalue(ni, "ni",
+                               stan::model::index_uni(i)), (1 - q))),
+                           (stan::math::log1m(theta) +
+                           stan::math::binomial_lpmf<false>(
+                             stan::model::rvalue(si, "si",
+                               stan::model::index_uni(i)),
+                             stan::model::rvalue(ni, "ni",
+                               stan::model::index_uni(i)), p))));
         }
       }
     } catch (const std::exception& e) {
@@ -305,11 +355,11 @@ public:
       double p = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 1;
       p = in__.template read_constrain_lub<local_scalar_t__, jacobian__>(0,
-            .5, lp__);
+            0.5, lp__);
       double q = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 2;
       q = in__.template read_constrain_lub<local_scalar_t__, jacobian__>(0,
-            .5, lp__);
+            0.5, lp__);
       double theta = std::numeric_limits<double>::quiet_NaN();
       current_statement__ = 3;
       theta = in__.template read_constrain_lub<local_scalar_t__,
@@ -327,24 +377,25 @@ public:
       }
       std::vector<int> Ti =
         std::vector<int>(n, std::numeric_limits<int>::min());
-      std::vector<double> pi =
+      std::vector<double> posterior_prob =
         std::vector<double>(n, std::numeric_limits<double>::quiet_NaN());
       current_statement__ = 9;
       for (int i = 1; i <= n; ++i) {
         current_statement__ = 6;
-        stan::model::assign(pi,
+        stan::model::assign(posterior_prob,
           pred(stan::model::rvalue(si, "si", stan::model::index_uni(i)),
             stan::model::rvalue(ni, "ni", stan::model::index_uni(i)), p, q,
-            theta, pstream__), "assigning variable pi",
+            theta, pstream__), "assigning variable posterior_prob",
           stan::model::index_uni(i));
         current_statement__ = 7;
         stan::model::assign(Ti,
           stan::math::bernoulli_rng(
-            stan::model::rvalue(pi, "pi", stan::model::index_uni(i)),
-            base_rng__), "assigning variable Ti", stan::model::index_uni(i));
+            stan::model::rvalue(posterior_prob, "posterior_prob",
+              stan::model::index_uni(i)), base_rng__),
+          "assigning variable Ti", stan::model::index_uni(i));
       }
       out__.write(Ti);
-      out__.write(pi);
+      out__.write(posterior_prob);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
     }
@@ -368,11 +419,11 @@ public:
       local_scalar_t__ p = DUMMY_VAR__;
       current_statement__ = 1;
       p = in__.read<local_scalar_t__>();
-      out__.write_free_lub(0, .5, p);
+      out__.write_free_lub(0, 0.5, p);
       local_scalar_t__ q = DUMMY_VAR__;
       current_statement__ = 2;
       q = in__.read<local_scalar_t__>();
-      out__.write_free_lub(0, .5, q);
+      out__.write_free_lub(0, 0.5, q);
       local_scalar_t__ theta = DUMMY_VAR__;
       current_statement__ = 3;
       theta = in__.read<local_scalar_t__>();
@@ -406,11 +457,11 @@ public:
       local_scalar_t__ p = DUMMY_VAR__;
       current_statement__ = 1;
       p = context__.vals_r("p")[(1 - 1)];
-      out__.write_free_lub(0, .5, p);
+      out__.write_free_lub(0, 0.5, p);
       local_scalar_t__ q = DUMMY_VAR__;
       current_statement__ = 2;
       q = context__.vals_r("q")[(1 - 1)];
-      out__.write_free_lub(0, .5, q);
+      out__.write_free_lub(0, 0.5, q);
       local_scalar_t__ theta = DUMMY_VAR__;
       current_statement__ = 3;
       theta = context__.vals_r("theta")[(1 - 1)];
@@ -426,7 +477,7 @@ public:
     names__ = std::vector<std::string>{"p", "q", "theta"};
     if (emit_transformed_parameters__) {}
     if (emit_generated_quantities__) {
-      std::vector<std::string> temp{"Ti", "pi"};
+      std::vector<std::string> temp{"Ti", "posterior_prob"};
       names__.reserve(names__.size() + temp.size());
       names__.insert(names__.end(), temp.begin(), temp.end());
     }
@@ -460,7 +511,7 @@ public:
           std::to_string(sym1__));
       }
       for (int sym1__ = 1; sym1__ <= n; ++sym1__) {
-        param_names__.emplace_back(std::string() + "pi" + '.' +
+        param_names__.emplace_back(std::string() + "posterior_prob" + '.' +
           std::to_string(sym1__));
       }
     }
@@ -479,16 +530,16 @@ public:
           std::to_string(sym1__));
       }
       for (int sym1__ = 1; sym1__ <= n; ++sym1__) {
-        param_names__.emplace_back(std::string() + "pi" + '.' +
+        param_names__.emplace_back(std::string() + "posterior_prob" + '.' +
           std::to_string(sym1__));
       }
     }
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"p\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"q\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"theta\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"Ti\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(n) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"},{\"name\":\"pi\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(n) + ",\"element_type\":{\"name\":\"real\"}},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"p\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"q\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"theta\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"Ti\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(n) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"},{\"name\":\"posterior_prob\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(n) + ",\"element_type\":{\"name\":\"real\"}},\"block\":\"generated_quantities\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"p\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"q\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"theta\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"Ti\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(n) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"},{\"name\":\"pi\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(n) + ",\"element_type\":{\"name\":\"real\"}},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"p\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"q\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"theta\",\"type\":{\"name\":\"real\"},\"block\":\"parameters\"},{\"name\":\"Ti\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(n) + ",\"element_type\":{\"name\":\"int\"}},\"block\":\"generated_quantities\"},{\"name\":\"posterior_prob\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(n) + ",\"element_type\":{\"name\":\"real\"}},\"block\":\"generated_quantities\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void

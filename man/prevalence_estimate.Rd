@@ -17,9 +17,9 @@ A numeric value of the prevalence estimate
 Compute the average-/median- or MAP-based prevalence estimates based on the scores
 }
 \note{
-We have showed that the median-based prevalence estimator is better
+We have shown that the median-based prevalence estimator is better
 than the average-based prevalence estimator in terms of bias, except when
-the prevalence is in an interval \eqn{J}. And the length of \eqn{J} is small when the
+the prevalence is in an interval \eqn{J}. The length of \eqn{J} is small when the
 number of replicates is always large.
 }
 \examples{
@@ -27,7 +27,7 @@ data("periodontal")
 theta <- mean(periodontal$ti)
 Y_A <- average_scoring(periodontal$ni, periodontal$si)
 Y_M <- median_scoring(periodontal$ni, periodontal$si)
-fit <- EMFit(periodontal$si,periodontal$ni)
+fit <- EMFit(periodontal$ni, periodontal$si)
 Y_MAP <- MAP_scoring(periodontal$ni, periodontal$si, fit)
 hat_theta_A <- prevalence_estimate(Y_A)
 hat_theta_M <- prevalence_estimate(Y_M)

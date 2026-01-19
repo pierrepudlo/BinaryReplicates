@@ -27,7 +27,7 @@ data(observed)
 }
 \description{
 Data from a mammography screening program.
-The dataset is not the original dataset, but an imputated dataset based on
+The dataset is not the original dataset, but an imputed dataset based on
 the summary statistics available publicly.
 }
 \keyword{datasets}
