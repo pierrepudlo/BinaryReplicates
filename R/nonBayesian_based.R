@@ -4,9 +4,9 @@
 #' @param ni Numeric vector of \eqn{n_i}'s, the total numbers of replicates for each individual
 #' @param si Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual
 #' @param param A list with 3 entries:
-#'   \code{theta} The probability of that \eqn{T=1}, i.e., the prevalence,
-#'   \code{p} The false positivity rate
-#'   \code{q} The false negativity rate
+#'   \code{theta} The probability that \eqn{T=1}, i.e., the prevalence,
+#'   \code{p} The false positive rate,
+#'   \code{q} The false negative rate.
 #' @param fit The object returned by [EMFit] containing the results of the EM algorithm
 #' @return A numeric vector of the scores
 #'
@@ -100,7 +100,7 @@ classify_with_scores <- function(scores, vL, vU) {
 #'               [average_scoring], [median_scoring] or [MAP_scoring]
 #' @return A numeric value of the prevalence estimate
 #'
-#' @note We have showed that the median-based prevalence estimator is better
+#' @note We have shown that the median-based prevalence estimator is better
 #' than the average-based prevalence estimator in terms of bias, except when
 #' the prevalence is in an interval \eqn{J}. And the length of \eqn{J} is small when the
 #'  number of replicates is always large.

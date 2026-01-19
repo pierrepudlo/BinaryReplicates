@@ -3,15 +3,15 @@
 #' @param ni Numeric vector of \eqn{n_i}'s, the total numbers of replicates for each individual
 #' @param si Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual
 #' @param ti Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual
-#'  If \code{NULL}, the EM algorithm is used to estimate the parameters. Default to \code{NULL}. See details
-#' @param N_init The number of initializations if \code{ti} is not provided. Default to 20
-#' @param maxIter The maximum number of iterations if EM algorithm is used. Default to 1e3
-#' @param errorMin The minimum error computed if EM algorithm is used. Default to 1e-7
+#'  If \code{NULL}, the EM algorithm is used to estimate the parameters. Defaults to \code{NULL}. See details.
+#' @param N_init The number of initializations if \code{ti} is not provided. Defaults to 20.
+#' @param maxIter The maximum number of iterations if the EM algorithm is used. Defaults to 1e3.
+#' @param errorMin The minimum error for convergence if the EM algorithm is used. Defaults to 1e-7.
 #' @param prior A list of prior parameters for the model. The prior distribution is as follows:
 #'
 #' \itemize{
-#' \item The false positivity rate: \eqn{p \sim \text{Beta}(a_{FP}, b_{FP})}
-#' \item The false negativity rate: \eqn{q \sim \text{Beta}(a_{FN}, b_{FN})}
+#' \item The false positive rate: \eqn{p \sim \text{Beta}(a_{FP}, b_{FP})}
+#' \item The false negative rate: \eqn{q \sim \text{Beta}(a_{FN}, b_{FN})}
 #' }
 #' @return A list with the following components:
 #' \describe{
@@ -204,11 +204,11 @@ EMFit <- function(si,ni,ti=NULL,prior=list(a_FP=2, b_FP=2,
 #' @param ni Numeric vector of \eqn{n_i}'s, the total numbers of replicates for each individual
 #' @param si Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual
 #' @param ti Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual
-#'  If \code{NULL}, the EM algorithm is used to estimate the parameters. Default to \code{NULL}. See details
+#'  If \code{NULL}, the EM algorithm is used to estimate the parameters. Defaults to \code{NULL}. See details.
 #' @param N_cv The number of folds. Default to 20
-#' @param N_init The number of initializations if \code{ti} is not provided. Default to 20 if  observations otherwise default to the number of observations, corresponding to leave-one-out cross-validation.
-#' @param maxIter The maximum number of iterations if EM algorithm is used. Default to 1e3
-#' @param errorMin The minimum error computed if EM algorithm is used. Default to 1e-7
+#' @param N_init The number of initializations if \code{ti} is not provided. Defaults to 20.
+#' @param maxIter The maximum number of iterations if EM algorithm is used. Defaults to 1e3.
+#' @param errorMin The minimum error computed if EM algorithm is used. Defaults to 1e-7.
 #' @param prior A list of prior parameters for the model. The prior distribution is as follows:
 #'
 #' @details
@@ -242,7 +242,7 @@ cvEM <- function(ni,si,ti=NULL,N_cv=NULL,
   n <- length(ni)
   if(is.null(N_cv)) N_cv <- min(20,n)
   if(N_cv < 2)stop("Choose at least 2 folds")
-  if(N_cv%%1 != 0)stop("Select an entire number of folds")
+  if (N_cv%%1 != 0) stop("Select an integer as number of folds")
   if(N_cv > n)stop("Select at most n folds")
   id_cv <- unlist(lapply(1:N_cv,rep,floor(n/N_cv)))
   if(n%%N_cv>0){
@@ -289,7 +289,7 @@ cvEM <- function(ni,si,ti=NULL,N_cv=NULL,
 #'
 #' @param object An object of class cvEM
 #' @param ti Numeric vector of \eqn{t_i}'s, the true values of the binary variable for each individual
-#'  If \code{NULL}, the EM algorithm is used to estimate the parameters. Default to \code{NULL}. See details
+#'  If \code{NULL}, the EM algorithm is used to estimate the parameters. Defaults to \code{NULL}. See details.
 #' @param vL The lower threshold for classification. Default to 0.5
 #' @param vU The upper threshold for classification. Default to 0.5
 #'

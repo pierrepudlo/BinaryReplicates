@@ -2,11 +2,11 @@
 #'
 #' @param newdata_ni Numeric vector of the total numbers of replicates per individuals
 #' @param newdata_si Numeric vector of the numbers of positive replicates per individuals
-#' @param fit The `stanfit` object return by [BayesianFit]
+#' @param fit The `stanfit` object returned by [BayesianFit]
 #'
 #' @details
 #' The `predict_scores` function computes the predictive Bayesian scores.
-#' It makes the empirical estimator, for a new individual \eqn{n+1}$, of the following integral:
+#' It computes the empirical estimator, for a new individual \eqn{n+1}, of the following integral:
 #' \deqn{Y_{B,n+1} = \int Y_{L,n+1}(\theta_T, p, q) \pi(\theta_T, p, q|S_1,...,S_{n})\text{d}\theta_T\text{d}p\text{d}q}
 #' where \eqn{\pi(\theta, p, q|S_1,...,S_{n})} is the posterior distribution
 #' of the parameters \eqn{\theta}, \eqn{p} and \eqn{q} given the data
@@ -30,7 +30,7 @@
 #' fitBay <- BayesianFit(periodontal$ni, periodontal$si, chains = 2, iter = 500)
 #' fitMAP <- EMFit(periodontal$si,periodontal$ni)
 #'
-#' ## Comparaison Bayesian <--> MAP
+#' ## Comparison Bayesian <--> MAP
 #' ni <- 200
 #' Ni <- rep(ni,ni+1)
 #' Si <- 0:ni

@@ -5,7 +5,7 @@
 #' @title Bayesian computations
 #' @param ni Numeric vector of \eqn{n_i}'s, the total numbers of replicates for each individual
 #' @param si Numeric vector of \eqn{s_i}'s, the numbers of replicates equal to 1 for each individual
-#' @param fit The `stanfit` object return by [BayesianFit]
+#' @param fit The `stanfit` object returned by [BayesianFit]
 #' @param level Posterior probability of the credible intervals
 #' @details See [BayesianFit] for details on the Bayesian model.
 #' @return
