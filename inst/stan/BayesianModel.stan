@@ -32,8 +32,8 @@ parameters {
 
 // The model to be estimated.
 model {
-  p ~ beta(a_FP, b_FP);
-  q ~ beta(a_FN, b_FN);
+  p ~ beta(a_FP, b_FP) T[0, 0.5];
+  q ~ beta(a_FN, b_FN) T[0, 0.5];
   theta ~ beta(a_T, b_T);
 
   for (i in 1:n) {

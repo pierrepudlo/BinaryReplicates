@@ -78,8 +78,16 @@ EMFit <- function(ni, si, ti = NULL,
     if (!is.null(ti) && !any(is.na(ti))) {
       # Closed-form solution when ti is fully known
       theta_hat <- mean(ti)
-      p_hat <- mean(si[ti < 1/2]) / mean(ni[ti < 1/2])
-      q_hat <- mean((ni - si)[ti >= 1/2]) / mean(ni[ti >= 1/2])
+      if (sum(ti < 1/2) == 0) {
+        p_hat <- 0
+      } else {
+        p_hat <- sum(si[ti < 1/2]) / sum(ni[ti < 1/2])
+      }
+      if (sum(ti >= 1/2) == 0) {
+        q_hat <- 0
+      } else {
+        q_hat <- sum((ni - si)[ti >= 1/2]) / sum(ni[ti >= 1/2])
+      }
       out <- list(
         score = ti,
         ti_clas = ti,
@@ -93,7 +101,9 @@ EMFit <- function(ni, si, ti = NULL,
       } else {
         id_na <- which(is.na(ti))
         score <- ti
-        score[id_na] <- rbeta(n, shape1 = si, shape2 = ni - si)[id_na]
+        score[id_na] <- rbeta(length(id_na),
+                               shape1 = si[id_na] + 1,
+                               shape2 = ni[id_na] - si[id_na] + 1)
       }
 
       iter <- 1
@@ -105,12 +115,14 @@ EMFit <- function(ni, si, ti = NULL,
       q_hat <- rbeta(1, 2, 2)
 
       while (error > errorMin && iter < maxIter) {
-        # E-step: update scores
+        # E-step: update scores (log-space for numerical stability)
         score_0 <- score
-        numer <- theta_hat * q_hat^(ni - si) * (1 - q_hat)^si
-        denom_right <- (1 - theta_hat) * p_hat^si * (1 - p_hat)^(ni - si)
-        denom <- numer + denom_right
-        score[id_na] <- numer[id_na] / denom[id_na]
+        log_numer <- log(theta_hat) + (ni - si) * log(q_hat) + si * log(1 - q_hat)
+        log_denom_r <- log(1 - theta_hat) + si * log(p_hat) +
+                       (ni - si) * log(1 - p_hat)
+        # log_sum_exp trick: log(a + b) = log_a + log(1 + exp(log_b - log_a))
+        log_denom <- log_numer + log1p(exp(log_denom_r - log_numer))
+        score[id_na] <- exp(log_numer[id_na] - log_denom[id_na])
 
         # M-step: update parameters
         theta_hat <- mean(score)
@@ -153,7 +165,9 @@ EMFit <- function(ni, si, ti = NULL,
       allRes[[i]] <- em_bin(ni, si, prior = prior, errorMin = errorMin, maxIter = maxIter)
       parai <- allRes[[i]]$parameters_hat
       loglikeli <- get_log_likelihood(ni, si, p = parai$p, q = parai$q, theta = parai$theta)
-      logPoster <- loglikeli + log(parai$p * (1 - parai$p) * parai$q * (1 - parai$q))
+      log_prior <- (prior$a_FP - 1) * log(parai$p) + (prior$b_FP - 1) * log(1 - parai$p) +
+                   (prior$a_FN - 1) * log(parai$q) + (prior$b_FN - 1) * log(1 - parai$q)
+      logPoster <- loglikeli + log_prior
       result[i, ] <- c(as.numeric(parai), logPoster)
     }
 

@@ -39,30 +39,30 @@
 #' matplot(Si,scores,type = "l",lty = 1,col = 1:2,
 #'         ylab = "Scores",xlab = "Number of Successes",main = "")
 predict_scores <- function(newdata_ni, newdata_si, fit) {
+  if (!is.numeric(newdata_ni) || !is.numeric(newdata_si)) {
+    stop("newdata_ni and newdata_si must be numeric vectors")
+  }
   if (length(newdata_ni) != length(newdata_si)) {
     stop("newdata_ni and newdata_si must have the same length")
   }
   n <- length(newdata_ni)
-  # Extract the latent variable
+  # Extract posterior samples
+
   post <- rstan::extract(fit, pars = c("theta", "p", "q"))
   n_post <- length(post$theta)
-  # Compute the posterior probability
-  newdata <- data.frame(
-    id = rep(1:n, each = n_post),
-    ni = rep(newdata_ni, each = n_post),
-    si = rep(newdata_si, each = n_post),
-    theta = rep(post$theta, times = n),
-    p = rep(post$p, times = n),
-    q = rep(post$q, times = n)
-  )
 
-  # Calculate Y_B
-  newdata$Y_B <- likelihood_scoring(newdata$ni, newdata$si,
-                                    list(theta = newdata$theta,
-                                         p = newdata$p,
-                                         q = newdata$q))
+  # Memory-efficient computation: loop over individuals instead of
 
-  # Calculate mean Y_B by id using base R
-  out <- aggregate(Y_B ~ id, data = newdata, FUN = mean)
-  return(out$Y_B)
+  # creating a massive data frame with n * n_post rows
+  scores <- numeric(n)
+  for (i in seq_len(n)) {
+    # Compute likelihood score for each posterior sample
+    log_numer <- log(post$theta) +
+                 dbinom(newdata_si[i], newdata_ni[i], 1 - post$q, log = TRUE)
+    log_denom_term2 <- log(1 - post$theta) +
+                       dbinom(newdata_si[i], newdata_ni[i], post$p, log = TRUE)
+    log_denom <- log_numer + log1p(exp(log_denom_term2 - log_numer))
+    scores[i] <- mean(exp(log_numer - log_denom))
+  }
+  return(scores)
 }

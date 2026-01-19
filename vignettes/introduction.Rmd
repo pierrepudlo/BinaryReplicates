@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(BinaryReplicates)
 library(tidyverse)
+set.seed(42)
 ```
 
 The `BinaryReplicates` package provides tools for the analysis of binary replicates.
