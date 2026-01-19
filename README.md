@@ -28,7 +28,7 @@ devtools::install_github("pierrepudlo/BinaryReplicates")
 
 The function to fit the Bayesian model is `BayesianFit`.
 The following example uses synthetic data generated from the model. 
-First, we generate the synthetic data with
+First, we generate the synthetic data:
 
 ```{r}
 theta <- .4
@@ -42,7 +42,7 @@ synth_data <- data.frame(ni = ni, si = si, ti=ti)
 
 ### Average- and median-based computations
 
-Compute average-based scores, classifications and prevalence estimate:
+Compute average-based scores, classifications, and prevalence estimates:
 
 ```{r}
 Y_A <- average_scoring(ni, si) # scoring
@@ -67,7 +67,7 @@ Y_L <- likelihood_scoring(ni, si, theta, p, q) # scorings
 T_L <- classify_with_scores(Y_L, vL = .4, vU = .6) # classifications
 ```
 
-### Bayesian scorings, classifications and prevalence estimate
+### Bayesian scores, classifications, and prevalence estimate
 
 Fit the Bayesian model to the synthetic data:
 
@@ -111,8 +111,8 @@ library(tidyverse)
 confusion <- synth_data %>%
   mutate(
     Status = ifelse(ti==1, "T=1", "T=0"),
-    Averge = T_A, Median = T_M, Likelihood = T_L, Bayesian = T_B) %>%
-  pivot_longer(cols = c(Averge, Median, Likelihood, Bayesian), 
+    Average = T_A, Median = T_M, Likelihood = T_L, Bayesian = T_B) %>%
+  pivot_longer(cols = c(Average, Median, Likelihood, Bayesian), 
                names_to = "Method", values_to = "Decision") %>%
   group_by(Status, Method, Decision) %>%
   summarise(count = n()) %>%

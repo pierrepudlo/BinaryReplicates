@@ -28,8 +28,8 @@ For each individual $i$ in the dataset, we observe $n_i$ replicates, each taking
 The probability of observing a $1$ is $1-q$ if $T_i = 1$ and $p$ if $T_i = 0$. Thus,
 
 - $S_i$ is the number of replicates equal to $1$ for individual $i$,
-- $p$ is the false-positivity rate, 
-- $q$ is the false-negativity rate.
+- $p$ is the false positive rate,
+- $q$ is the false negative rate.
 
 We assume that the individuals are independent and identically distributed. The prevalence of state $1$ in the population is $\theta_T = P(T_i = 1)$.
 
@@ -71,10 +71,10 @@ We will use this dataset to illustrate the main functions of the package.
 
 ## Scoring the individuals
 
-We provide various ways to score an individual of the dataset: each score is a number between $0$ and $1$. Higher values of the score indicate a higher probability of being in state $1$. The scoring methods are :
+We provide various ways to score individuals in the dataset: each score is a number between $0$ and $1$. Higher values of the score indicate a higher probability of being in state $1$. The scoring methods are:
 
-- the average or the median of the replicates of this individual,
-- a likelihood based score that requires estimates of $p$, $q$, and $\theta_T$ and
+- the average or the median of the replicates of the individual,
+- a likelihood-based score that requires estimates of $p$, $q$, and $\theta_T$, and
 - the posterior probability of being in state $1$.
 
 Before computing the scores, we need to sample from the posterior distribution. With the default prior, this is done as follows:
@@ -100,7 +100,7 @@ The latent state of an individual is either $0$ or $1$. But since binary replica
 
 - $0$ if the score is lower than a threshold $v_L$
 - $1$ if the score is higher than a threshold $v_U$
-- $1/2$ otherwise, which means that we are uncertain about the prediction. This is an inconclusive decision that appeals for more data to conclude.
+- $1/2$ otherwise, which means that we are uncertain about the prediction. This is an inconclusive decision that calls for more data to conclude.
 
 We can compute the predictions for the synthetic dataset as follows:
 ```{r}
@@ -118,8 +118,8 @@ We can now count how many times we decide in favor of $0$, $1$ or $1/2$ (inconcl
 confusion <- synth_data %>%
   mutate(
     Status = ifelse(ti==1, "T=1", "T=0"),
-    Averge = T_A, Median = T_M, Likelihood = T_L, Bayesian = T_B) %>%
-  pivot_longer(cols = c(Averge, Median, Likelihood, Bayesian), 
+    Average = T_A, Median = T_M, Likelihood = T_L, Bayesian = T_B) %>%
+  pivot_longer(cols = c(Average, Median, Likelihood, Bayesian), 
                names_to = "Method", values_to = "Decision") %>%
   group_by(Status, Method, Decision) %>%
   summarise(count = n(), .groups = "keep") %>%
@@ -131,7 +131,7 @@ confusion
 
 ## Predicting scores on new data and classify them
 
-Based on the Bayesian fitting, we can also compute the Bayesian scores and the predictions on new data. Let us say we are interrested in predicting the scores and the latent state of   individuals with $n_i = 8$ replicates and $s_i \in \{0, 1, 2, 3, 4, 5, 6, 7, 8\}$. The new data are thus:
+Based on the Bayesian fitting, we can also compute the Bayesian scores and the predictions on new data. Let us say we are interested in predicting the scores and the latent state of individuals with $n_i = 8$ replicates and $s_i \in \{0, 1, 2, 3, 4, 5, 6, 7, 8\}$. The new data are thus:
 
 ```{r}
 new_data <- data.frame(ni = rep(8, 9), si = 0:8)
