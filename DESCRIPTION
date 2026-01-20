@@ -14,7 +14,7 @@ Description: Statistical methods for analyzing binary replicates, which are nois
     that an individual is in the positive state. Includes maximum a posteriori
     estimation via the EM algorithm and full Bayesian inference via Stan.
     Supports classification with inconclusive decisions and prevalence estimation.
-License: GPL (>= 3) + file LICENSE
+License: GPL (>= 3)
 URL: https://github.com/pierrepudlo/BinaryReplicates
 BugReports: https://github.com/pierrepudlo/BinaryReplicates/issues
 Encoding: UTF-8

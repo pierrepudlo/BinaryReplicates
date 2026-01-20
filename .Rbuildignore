@@ -1,6 +1,8 @@
 ^BinaryReplicates\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+^LICENSE$
 ^tmp/
 ^doc$
 ^.github$
+^CLAUDE.md$
